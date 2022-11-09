@@ -1,0 +1,18 @@
+{
+  "name": "mark_api",
+  "version": "1.0.0",
+  "description": "api pour le site web mark",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "(https://github.com/Elelia/Mark_api)"
+  },
+  "author": "lisa",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
