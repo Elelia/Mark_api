@@ -1,4 +1,6 @@
 const express = require('express');
 const app = express();
 
-app.listen(8080, () => {  console.log("Serveur à l'écoute")       })
+app.listen(8080, () => {  
+    console.log("Serveur à l'écoute")       
+})
