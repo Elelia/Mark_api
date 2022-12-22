@@ -8,16 +8,14 @@ const pool = new pg.Pool({
     port: 35274
 });
 
-const getVideos = (req, res) => {
-    pool.query('SELECT * FROM video', (err, res) => {
-        if(err) {
-            throw err
-        }
-        console.log('Bravo !')
-        // pool.end()
-    })
-}
+// const getVideos = (req, res) => {
+//     pool.query('SELECT * FROM video', (err, res) => {
+//         if(err) {
+//             throw err
+//         }
+//         console.log('Bravo !')
+//         // pool.end()
+//     })
+// }
 
-module.exports = {
-    getVideos
-}
+module.exports = pool;
