@@ -14,9 +14,16 @@ exports.getAllUsers = (response) => {
     dbConn.query('SELECT * FROM compte', (err, res) => {
       if (err) {
         throw err
+      } if(Array.isArray(res.rows) && res.rows.length === 0) {
+        dbConn.end(function() {
+          throw new Error('No results found');
+        })
       }
-      console.log('All users is a success !');
-      response(res.rows);
+      else {
+        const user = new User(res.rows[0].id, res.rows[0].nom, res.rows[0].prenom, res.rows[0].mail, res.rows[0].admin, res.rows[0].mdp);
+        console.log('Get all users is a success !');
+        response(user);
+      }
     })
 }
 
