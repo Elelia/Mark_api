@@ -1,35 +1,39 @@
 var dbConn = require('../../dbconfig');
 
-var User = (user) => {
+function User(id, nom, prenom, mail, admin, mdp) {
   this.id = id;
-  this.nom = user.nom;
-  this.prenom = user.prenom;
-  this.mail = user.mail;
-  this.admin = user.admin;
-  this.mdp = user.mdp;
+  this.nom = nom;
+  this.prenom = prenom;
+  this.mail = mail;
+  this.admin = admin;
+  this.mdp = mdp;
 }
 
 //get user
-User.getAllUsers = (response) => {
+exports.getAllUsers = (response) => {
     dbConn.query('SELECT * FROM compte', (err, res) => {
       if (err) {
         throw err
       }
       console.log('All users is a success !');
-      response(null,res.rows);
-      //response.status(200).json(res.rows);
+      response(res.rows);
     })
 }
 
 //connect user
-User.connectUser = (mail, mdp, response) => {
+exports.connectUser = (mail, mdp, response) => {
   dbConn.query('SELECT * FROM compte WHERE mail=$1 and mdp=$2', [mail, mdp], (err, res) => {
     if (err) {
       throw err
+    } if(Array.isArray(res.rows) && res.rows.length === 0) {
+      dbConn.end(function() {
+        throw new Error('No results found');
+      })
     }
-    console.log('Connect one user is a success !');
-    response(null,res.rows);
+    else {
+      const user = new User(res.rows[0].id, res.rows[0].nom, res.rows[0].prenom, res.rows[0].mail, res.rows[0].admin, res.rows[0].mdp);
+      console.log('Connect one user is a success !');
+      response(user);
+    }
   })
 }
-
-module.exports = User;

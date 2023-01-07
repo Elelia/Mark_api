@@ -1,8 +1,9 @@
 const UsersModel = require('../models/users');
 
 //get all user
-exports.getAllUsers = (res) => {
+exports.getAllUsers = (req, res) => {
     console.log("all users");
+    //console.log(res);
     UsersModel.getAllUsers((err, users) => {
         if(err) {
             res.send(err);
@@ -14,12 +15,9 @@ exports.getAllUsers = (res) => {
 
 //connect user
 exports.connectUser = (req,res) => {
-    console.log("connect user");
-    UsersModel.connectUser(req.params.mail, req.params.mdp, (err, users) => {
-        if(err) {
-            res.send(err);
-        }
-        console.log("easy la connexion");
-        res.send(users);
+    console.log("try connecting user");
+    UsersModel.connectUser(req.params.mail, req.params.mdp, (user) => {
+        console.log("connect one user is a success");
+        res.send(user);
     })
 }

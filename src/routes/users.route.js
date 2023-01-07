@@ -2,10 +2,10 @@ const express = require('express');
 const { route } = require('express/lib/application');
 const router = express.Router();
 
-const users = require('../controllers/users.controller');
+const Users = require('../controllers/users.controller');
 
-router.get('/', users.getAllUsers);
+router.get('/', Users.getAllUsers);
 
-router.get('/:mail/:mdp', users.connectUser);
+router.get('/login/:mail/:mdp', Users.connectUser);
 
 module.exports = router;

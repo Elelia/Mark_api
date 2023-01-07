@@ -4,7 +4,7 @@ const pool = new pg.Pool({
     user: 'lisa',
     host: 'fs405877-002.eu.clouddb.ovh.net',
     database: 'mark',
-    password: '*******',
+    password: 'pinG07unF',
     port: 35274
 });
 
