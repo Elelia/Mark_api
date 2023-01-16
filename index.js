@@ -23,7 +23,7 @@ app.listen(port, () => {
     console.log(`Serveur à l'écoute sur le port ${port}`)      
 });
 
-app.get("/", (res) => {
+app.get("/", (req, res) => {
     res.send("Homepage here.");
 });
 
