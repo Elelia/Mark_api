@@ -4,10 +4,7 @@ const UsersModel = require('../models/users');
 exports.getAllUsers = (req, res) => {
     console.log("all users");
     //console.log(res);
-    UsersModel.getAllUsers((err, users) => {
-        if(err) {
-            res.send(err);
-        }
+    UsersModel.getAllUsers((users) => {
         console.log("easy les utilisateurs");
         res.send(users);
     })
