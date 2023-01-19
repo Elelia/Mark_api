@@ -32,3 +32,5 @@ const usersRoute = require('./src/routes/users.route');
 
 //utilisation des routes
 app.use('/users', usersRoute);
+
+module.exports = app;
