@@ -33,4 +33,5 @@ const usersRoute = require('./src/routes/users.route');
 //utilisation des routes
 app.use('/users', usersRoute);
 
+//export the Express API
 module.exports = app;
