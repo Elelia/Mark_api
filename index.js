@@ -6,7 +6,7 @@ const port = process.env.PORT || 5000;
 var cors = require('cors');
 
 app.use(cors({
-  origin: 'http://localhost:3000'
+  origin: 'https://mark-website-sigma.vercel.app'
 }));
 
 //parse request data content type application/x-www
