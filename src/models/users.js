@@ -1,15 +1,5 @@
 var dbConn = require('../../dbconfig');
 
-//constructeur de l'objet User
-function User(id, nom, prenom, mail, admin, mdp) {
-  this.id = id;
-  this.nom = nom;
-  this.prenom = prenom;
-  this.mail = mail;
-  this.admin = admin;
-  this.mdp = mdp;
-}
-
 //get user
 exports.getAllUsers = (response) => {
     dbConn.query('SELECT * FROM compte', (err, res) => {
