@@ -1,15 +1,5 @@
 var dbConn = require('../../dbconfig');
 
-//constructeur de l'objet User
-function User(id, nom, prenom, mail, admin, mdp) {
-  this.id = id;
-  this.nom = nom;
-  this.prenom = prenom;
-  this.mail = mail;
-  this.admin = admin;
-  this.mdp = mdp;
-}
-
 //get user
 exports.getAllUsers = (response) => {
     dbConn.query('SELECT * FROM compte', (err, res) => {
@@ -21,14 +11,8 @@ exports.getAllUsers = (response) => {
         })
       }
       else {
-        var allUser = {};
-        for(var i = 0; i <= res.rows.length; i++) {
-          var user = new User(res.rows[0].id, res.rows[0].nom, res.rows[0].prenom, res.rows[0].mail, res.rows[0].admin, res.rows[0].mdp);
-          allUser[i]=user;
-        }
-        
         console.log('Get all users is a success !');
-        response(allUser);
+        response(res.rows);
       }
     })
 }
