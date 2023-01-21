@@ -26,7 +26,9 @@ exports.getAllUsers = (req, res) => {
 exports.connectUser = (req,res) => {
     console.log("try connecting user");
     UsersModel.connectUser(req.params.mail, req.params.mdp, (user) => {
+        let userLogin = user.map(oneUser => new User(oneUser.id, oneUser.nom, oneUser.prenom, oneUser.mail, oneUser.admin, oneUser.mdp));
+        let results = JSON.stringify(userLogin);
         console.log("connect one user is a success");
-        res.send(user);
+        res.send(results);
     })
 }

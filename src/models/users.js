@@ -38,9 +38,9 @@ exports.connectUser = (mail, mdp, response) => {
       })
     }
     else {
-      var user = new User(res.rows[0].id, res.rows[0].nom, res.rows[0].prenom, res.rows[0].mail, res.rows[0].admin, res.rows[0].mdp);
+      //var user = new User(res.rows[0].id, res.rows[0].nom, res.rows[0].prenom, res.rows[0].mail, res.rows[0].admin, res.rows[0].mdp);
       console.log('Connect one user is a success !');
-      response(user);
+      response(res.rows);
     }
   })
 }
