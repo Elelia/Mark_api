@@ -4,8 +4,10 @@ const router = express.Router();
 
 const Users = require('../controllers/users.controller');
 
-router.get('/', Users.getAllUsers);
+//route qui retourne tous les comptes de la db
+router.get('/', Users.allUsers);
 
-router.get('/login/:mail/:mdp', Users.connectUser);
+//route qui permet de connecter un utilisateur s'il a rentré son bon mail et mpd
+router.post('/login', Users.loginUser);
 
 module.exports = router;

@@ -1,36 +1,44 @@
-var dbConn = require('../../dbconfig');
+const dbConn = require('../../dbconfig');
 
-//get user
-exports.getAllUsers = (response) => {
-    dbConn.query('SELECT * FROM compte', (err, res) => {
-      if (err) {
-        throw err
-      } if(Array.isArray(res.rows) && res.rows.length === 0) {
-        dbConn.end(function() {
-          throw new Error('No results found');
-        })
-      }
-      else {
-        console.log('Get all users is a success !');
-        response(res.rows);
-      }
-    })
+//all users
+async function getAllUsers() {
+    //console.log(mail);
+    dbConn.connect();
+  
+    const query = `SELECT * FROM compte`;
+    //console.log(query);
+  
+    let result;
+    try {
+        result = await dbConn.query(query);
+        //console.log(result.rows);
+    } catch (err) {
+        console.error(err);
+    }
+    console.log(result.rows);
+    return result.rows;
 }
 
-//create and connect user
-exports.connectUser = (mail, mdp, response) => {
-  dbConn.query('SELECT * FROM compte WHERE mail=$1 and mdp=$2', [mail, mdp], (err, res) => {
-    if (err) {
-      throw err
-    } if(Array.isArray(res.rows) && res.rows.length === 0) {
-      dbConn.end(function() {
-        throw new Error('No results found');
-      })
+//connect one user
+async function connectUser(mail, mdp) {
+    //console.log(mail);
+    dbConn.connect();
+  
+    const query = `SELECT * FROM compte WHERE mail=$1 and mdp=$2`;
+    //console.log(query);
+  
+    let result;
+    try {
+        result = await dbConn.query(query, [mail, mdp]);
+        //console.log(result.rows);
+    } catch (err) {
+        console.error(err);
     }
-    else {
-      //var user = new User(res.rows[0].id, res.rows[0].nom, res.rows[0].prenom, res.rows[0].mail, res.rows[0].admin, res.rows[0].mdp);
-      console.log('Connect one user is a success !');
-      response(res.rows);
-    }
-  })
+    console.log(result.rows);
+    return result.rows;
 }
+
+module.exports = {
+    connectUser,
+    getAllUsers
+};

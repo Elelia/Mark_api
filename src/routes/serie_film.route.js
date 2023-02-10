@@ -6,4 +6,6 @@ const SerieFilm = require('../controllers/serie_film.controller');
 
 router.get('/', SerieFilm.getAllSeriefilm);
 
+router.post('/delete');
+
 module.exports = router;

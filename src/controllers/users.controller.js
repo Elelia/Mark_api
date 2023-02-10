@@ -1,34 +1,43 @@
-const UsersModel = require('../models/users');
+//la classe User
+const User = require('../models/users.class');
+//les fonctions liées à user
+const UserFunction = require('../models/users');
 
-//constructeur de l'objet User
-function User(id, nom, prenom, mail, admin, mdp) {
-    this.id = id;
-    this.nom = nom;
-    this.prenom = prenom;
-    this.mail = mail;
-    this.admin = admin;
-    this.mdp = mdp;
+//fonction qui permet de connecter un utilisateur
+async function loginUser(req, res) {
+    var mail = req.body.email;
+    var mdp = req.body.password;
+    const result = await UserFunction.connectUser(mail, mdp);
+    if (result.length > 0) {
+        // create a new user object
+        let user = result.map(oneUser => new User(oneUser.id, oneUser.nom, oneUser.prenom, oneUser.mail, oneUser.admin, oneUser.mdp));
+        //revoir les codes d'erreur
+        res.status(200).json({
+            success: true,
+            message: 'Login successful',
+            user: user
+        });
+    } else {
+        res.status(400).json({
+            success: false,
+            message: 'Login failed'
+        });
+    }
 }
 
-//get all user
-exports.getAllUsers = (req, res) => {
-    //console.log("all users");
-    //console.log(res);
-    UsersModel.getAllUsers((users) => {
-        let allUsers = users.map(oneUser => new User(oneUser.id, oneUser.nom, oneUser.prenom, oneUser.mail, oneUser.admin, oneUser.mdp));
-        let results = JSON.stringify(allUsers);
-        console.log("easy les utilisateurs");
-        res.send(results);
-    })
+//fonction qui permet de créer tous les utilisateurs et de les retourner
+async function allUsers(req, res) {
+    const results = await UserFunction.getAllUsers();
+    if (results.length > 0) {
+        // create a new user object
+        let allUsers = results.map(oneUser => new User(oneUser.id, oneUser.nom, oneUser.prenom, oneUser.mail, oneUser.admin, oneUser.mdp));
+        res.status(200).json(allUsers);
+    } else {
+        res.status(500).send('No values');
+    }
 }
 
-//connect user
-exports.connectUser = (req,res) => {
-    console.log("try connecting user");
-    UsersModel.connectUser(req.params.mail, req.params.mdp, (user) => {
-        let userLogin = user.map(oneUser => new User(oneUser.id, oneUser.nom, oneUser.prenom, oneUser.mail, oneUser.admin, oneUser.mdp));
-        let results = JSON.stringify(userLogin);
-        console.log("connect one user is a success");
-        res.send(results);
-    })
-}
+module.exports = {
+    loginUser,
+    allUsers
+};
