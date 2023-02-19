@@ -4,8 +4,8 @@ const router = express.Router();
 
 const SerieFilm = require('../controllers/serie_film.controller');
 
-router.get('/', SerieFilm.getAllSeriefilm);
+router.get('/', SerieFilm.allSeriefilm);
 
-router.post('/delete');
+router.get('/categories', SerieFilm.allCategorie);
 
 module.exports = router;
