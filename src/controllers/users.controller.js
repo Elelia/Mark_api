@@ -2,6 +2,7 @@
 const User = require('../models/users.class');
 //les fonctions liées à user
 const UserFunction = require('../models/users');
+const jwt = require('jsonwebtoken');
 
 //fonction qui permet de connecter un utilisateur
 async function loginUser(req, res) {
@@ -12,10 +13,13 @@ async function loginUser(req, res) {
         // create a new user object
         let user = result.map(oneUser => new User(oneUser.id, oneUser.nom, oneUser.prenom, oneUser.mail, oneUser.admin, oneUser.mdp));
         //revoir les codes d'erreur
+        // Generate JWT
+        //const payload = { user: user.id };
+        //const token = jwt.sign(payload, secretKey, { expiresIn: '3h' });
         res.status(200).json({
             success: true,
             message: 'Login successful',
-            user: user
+            user: user,
         });
     } else {
         res.status(400).json({
