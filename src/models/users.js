@@ -23,7 +23,6 @@ async function getAllUsers() {
 //connect one user
 async function connectUser(mail, mdp) {
     dbConn.connect();
-    console.log(mail);
   
     const query1 = `SELECT mdp FROM compte WHERE mail=$1`;
     const query2 = `SELECT * FROM compte WHERE mail=$1 and mdp=$2`;
@@ -33,7 +32,9 @@ async function connectUser(mail, mdp) {
     let valid = false;
     try {
         res = await dbConn.query(query1, [mail]);
+        //console.log(res);
         hash = res.rows[0].mdp;
+        //console.log(hash);
         //let hash = await bcrypt.hash(password, 10);
         //await dbConn.query(query3, [mail, hash]);
         valid = await bcrypt.compare(mdp, hash);

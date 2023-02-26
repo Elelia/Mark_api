@@ -3,7 +3,7 @@ const User = require('../models/users.class');
 //les fonctions liées à user
 const UserFunction = require('../models/users');
 const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
+//const crypto = require('crypto');
 
 //fonction qui permet de connecter un utilisateur
 async function loginUser(req, res) {
@@ -18,17 +18,19 @@ async function loginUser(req, res) {
         //console.log(secret);
         //process.env.SECRET_KEY = secret;
         const payload = { id: user.id, isAdmin: user.admin };
-        const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '3h' });
-        const decodedToken = jwt.decode(token, { complete: true });
+        const accessToken = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '1h' });
+        //const decodedToken = jwt.decode(token, { complete: true });
         //console.log(decodedToken.header.alg);
         //process.env.SECRET_KEY = token;
         //console.log(process.env.SECRET_KEY);
         //user[0].token = token;
+        //const refreshToken = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '1h' });
         res.status(200).json({
             success: true,
             message: 'Login successful',
             user: user,
-            token
+            payload,
+            accessToken
         });
     } else {
         res.status(400).json({
@@ -50,7 +52,7 @@ async function allUsers(req, res) {
     }
 }
 
-//test
+//vérifie si le token est valide ou non
 const verify = (req, res, next) => {
     const authHeader = req.headers.authorization;
     if(authHeader) {
@@ -67,6 +69,15 @@ const verify = (req, res, next) => {
     } else {
         //401 c'est quand on n'a pas le token
         res.status(401).json("NO");
+    }
+}
+
+let refreshTokens = [];
+
+const refresh = (req, res) => {
+    const refreshToken = req.body.token;
+    if(!refreshToken) {
+        return res.status(401).json("Nononon");
     }
 }
 
