@@ -3,6 +3,7 @@ const User = require('../models/users.class');
 //les fonctions liées à user
 const UserFunction = require('../models/users');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 //fonction qui permet de connecter un utilisateur
 async function loginUser(req, res) {
@@ -13,13 +14,21 @@ async function loginUser(req, res) {
         // create a new user object
         let user = result.map(oneUser => new User(oneUser.id, oneUser.nom, oneUser.prenom, oneUser.mail, oneUser.admin, oneUser.mdp));
         //revoir les codes d'erreur
-        // Generate JWT
-        //const payload = { user: user.id };
-        //const token = jwt.sign(payload, secretKey, { expiresIn: '3h' });
+        //const secret = crypto.randomBytes(64).toString('hex');
+        //console.log(secret);
+        //process.env.SECRET_KEY = secret;
+        const payload = { id: user.id, isAdmin: user.admin };
+        const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '3h' });
+        const decodedToken = jwt.decode(token, { complete: true });
+        //console.log(decodedToken.header.alg);
+        //process.env.SECRET_KEY = token;
+        //console.log(process.env.SECRET_KEY);
+        //user[0].token = token;
         res.status(200).json({
             success: true,
             message: 'Login successful',
             user: user,
+            token
         });
     } else {
         res.status(400).json({
@@ -41,7 +50,28 @@ async function allUsers(req, res) {
     }
 }
 
+//test
+const verify = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if(authHeader) {
+        const token = authHeader.split(" ")[1];
+        console.log(token);
+        jwt.verify(token, process.env.SECRET_KEY, (err, payload) => {
+            if(err) {
+                //403 c'est quand on a un token mais qu'il n'est pas bon
+                return res.status(403).json("TOUJOURS NON TON TOKEN IL PUE");
+            }
+            req.user = payload;
+            next();
+        })
+    } else {
+        //401 c'est quand on n'a pas le token
+        res.status(401).json("NO");
+    }
+}
+
 module.exports = {
     loginUser,
-    allUsers
+    allUsers,
+    verify
 };

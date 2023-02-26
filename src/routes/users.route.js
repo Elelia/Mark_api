@@ -8,6 +8,8 @@ const Users = require('../controllers/users.controller');
 router.get('/', Users.allUsers);
 
 //route qui permet de connecter un utilisateur s'il a rentré son bon mail et mpd
-router.post('/login', Users.loginUser);
+router.post('/auth/login', Users.loginUser);
+
+router.get('/auth/test/:id', [Users.verify, Users.allUsers]);
 
 module.exports = router;

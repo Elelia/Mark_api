@@ -1,4 +1,5 @@
 const dbConn = require('../../dbconfig');
+const bcrypt = require('bcrypt');
 
 //all users
 async function getAllUsers() {
@@ -15,26 +16,34 @@ async function getAllUsers() {
     } catch (err) {
         console.error(err);
     }
-    console.log(result.rows);
+    //console.log(result.rows);
     return result.rows;
 }
 
 //connect one user
 async function connectUser(mail, mdp) {
-    //console.log(mail);
     dbConn.connect();
+    console.log(mail);
   
-    const query = `SELECT * FROM compte WHERE mail=$1 and mdp=$2`;
-    //console.log(query);
+    const query1 = `SELECT mdp FROM compte WHERE mail=$1`;
+    const query2 = `SELECT * FROM compte WHERE mail=$1 and mdp=$2`;
+    //const query3 = `UPDATE compte SET mdp = $2 WHERE mail=$1`;
   
     let result;
+    let valid = false;
     try {
-        result = await dbConn.query(query, [mail, mdp]);
-        //console.log(result.rows);
+        res = await dbConn.query(query1, [mail]);
+        hash = res.rows[0].mdp;
+        //let hash = await bcrypt.hash(password, 10);
+        //await dbConn.query(query3, [mail, hash]);
+        valid = await bcrypt.compare(mdp, hash);
+        if(valid) {
+            result = await dbConn.query(query2, [mail, hash]);
+        }
     } catch (err) {
         console.error(err);
     }
-    console.log(result.rows);
+    //console.log(result.rows);
     return result.rows;
 }
 
