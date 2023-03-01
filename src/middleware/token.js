@@ -27,7 +27,7 @@ function authenticateToken(req, res, next) {
   }
 }
 
-function sendCookie(token) {
+function sendCookie(token, next) {
   console.log(token);
   res.cookie('token', token, {
     httpOnly: true,
@@ -35,6 +35,7 @@ function sendCookie(token) {
     sameSite: 'strict',
     maxAge: 24 * 60 * 60 * 1000 // durée de validité du cookie en millisecondes (ici 24 heures)
   }).sendStatus(200);
+  next();
 }
 
 module.exports = {
