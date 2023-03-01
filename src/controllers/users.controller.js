@@ -15,7 +15,7 @@ async function loginUser(req, res) {
         // create a new user object
         let user = result.map(oneUser => new User(oneUser.id, oneUser.nom, oneUser.prenom, oneUser.mail, oneUser.admin, oneUser.mdp));
         const accessToken = Token.generateToken(user);
-        Token.sendCookie(accessToken);
+        //Token.sendCookie(accessToken);
         console.log(accessToken);
         //revoir les codes d'erreur
         //const secret = crypto.randomBytes(64).toString('hex');

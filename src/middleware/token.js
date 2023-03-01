@@ -33,7 +33,7 @@ function sendCookie(token, next) {
     httpOnly: true,
     secure: true,
     sameSite: 'strict',
-    maxAge: 24 * 60 * 60 * 1000 // durée de validité du cookie en millisecondes (ici 24 heures)
+    maxAge: 24 * 60 * 60 * 1000
   }).sendStatus(200);
   next();
 }
