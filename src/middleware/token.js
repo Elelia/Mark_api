@@ -27,7 +27,7 @@ function authenticateToken(req, res, next) {
   }
 }
 
-function sendCookie(token) {
+function sendCookie(token, next) {
   console.log(token);
   res.cookie('token', token, {
     httpOnly: true,
