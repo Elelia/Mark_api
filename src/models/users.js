@@ -23,6 +23,7 @@ async function getAllUsers() {
 //connect one user
 async function connectUser(mail, mdp) {
     dbConn.connect();
+    console.log('yo');
   
     const query1 = `SELECT mdp FROM compte WHERE mail=$1`;
     const query2 = `SELECT * FROM compte WHERE mail=$1 and mdp=$2`;
