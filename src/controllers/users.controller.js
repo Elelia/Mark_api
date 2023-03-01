@@ -2,9 +2,8 @@
 const User = require('../models/users.class');
 //les fonctions liées à user
 const UserFunction = require('../models/users');
-//const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 //const crypto = require('crypto');
-const Token = require('../middleware/token');
 
 //fonction qui permet de connecter un utilisateur
 async function loginUser(req, res) {
@@ -14,13 +13,12 @@ async function loginUser(req, res) {
     if (result.length > 0) {
         // create a new user object
         let user = result.map(oneUser => new User(oneUser.id, oneUser.nom, oneUser.prenom, oneUser.mail, oneUser.admin, oneUser.mdp));
-        const accessToken = Token.generateToken(user);
         //revoir les codes d'erreur
         //const secret = crypto.randomBytes(64).toString('hex');
         //console.log(secret);
         //process.env.SECRET_KEY = secret;
-        //const payload = { id: user.id, isAdmin: user.admin };
-        //const accessToken = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '1h' });
+        const payload = { id: user.id, isAdmin: user.admin };
+        const accessToken = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '1h' });
         //const decodedToken = jwt.decode(token, { complete: true });
         //console.log(decodedToken.header.alg);
         //process.env.SECRET_KEY = token;
