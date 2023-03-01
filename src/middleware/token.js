@@ -35,7 +35,6 @@ function sendCookie(token, next) {
     sameSite: 'strict',
     maxAge: 24 * 60 * 60 * 1000 // durée de validité du cookie en millisecondes (ici 24 heures)
   }).sendStatus(200);
-  next();
 }
 
 module.exports = {
