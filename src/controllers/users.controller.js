@@ -20,7 +20,7 @@ async function loginUser(req, res) {
             success: true,
             message: 'Login successful',
             user: user,
-            accessToken
+            token: accessToken
         });
     } else {
         res.status(400).json({
