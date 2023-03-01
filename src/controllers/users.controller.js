@@ -32,7 +32,6 @@ async function loginUser(req, res) {
             success: true,
             message: 'Login successful',
             user: user,
-            payload,
             accessToken
         });
     } else {

@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 
 // Middleware function to generate JWT
 function generateToken(user) {
+  console.log(user);
   const payload = { id: user.id, isAdmin: user.admin };
   const accessToken = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '1h' });
   return accessToken;
