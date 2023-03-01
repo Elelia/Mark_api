@@ -31,6 +31,7 @@ async function connectUser(mail, mdp) {
     let result;
     let valid = false;
     try {
+        //donc si y a une erreur de mdp il gère pas bien l'erreur et crash
         res = await dbConn.query(query1, [mail]);
         //console.log(res);
         hash = res.rows[0].mdp;
