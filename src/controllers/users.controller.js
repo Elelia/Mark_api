@@ -2,8 +2,7 @@
 const User = require('../models/users.class');
 //les fonctions liées à user
 const UserFunction = require('../models/users');
-//const jwt = require('jsonwebtoken');
-//const crypto = require('crypto');
+//pour gérer les tokens
 const Token = require('../../session');
 
 //fonction qui permet de connecter un utilisateur
@@ -16,7 +15,6 @@ async function loginUser(req, res) {
         let user = result.map(oneUser => new User(oneUser.id, oneUser.nom, oneUser.prenom, oneUser.mail, oneUser.admin, oneUser.mdp));
         const accessToken = Token.generateToken(user);
         Token.setTokenCookie(res, accessToken);
-        console.log(accessToken);
         //revoir les codes d'erreur
         res.status(200).json({
             success: true,
