@@ -6,6 +6,7 @@ const port = process.env.PORT || 5000;
 var cors = require('cors');
 const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
 
 app.use(cors({
   origin: 'https://mark-website-sigma.vercel.app'
@@ -23,6 +24,7 @@ app.use(bodyParser.json());
 
 //middleware
 app.use(express.json());
+app.use(cookieParser());
 
 //test de connexion sur le localhost
 app.listen(port, () => {  
