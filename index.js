@@ -5,7 +5,6 @@ const app = express();
 const port = process.env.PORT || 5000;
 var cors = require('cors');
 const dotenv = require('dotenv');
-const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 
 app.use(cors({
