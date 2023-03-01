@@ -33,9 +33,7 @@ async function connectUser(mail, mdp) {
     try {
         //donc si y a une erreur de mdp il gère pas bien l'erreur et crash
         res = await dbConn.query(query1, [mail]);
-        //console.log(res);
         hash = res.rows[0].mdp;
-        //console.log(hash);
         //let hash = await bcrypt.hash(password, 10);
         //await dbConn.query(query3, [mail, hash]);
         valid = await bcrypt.compare(mdp, hash);

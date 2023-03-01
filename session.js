@@ -29,6 +29,7 @@ function authenticateToken(req, res, next) {
 
 //refresh le token de l'utilisateur pour qu'il ne perde pas sa section à l'expiration
 //si il est encore actif
+//donc faire ça à chaque route protégé ?
 function refreshToken(req, res, next) {
   const token = req.cookies.token;
 
