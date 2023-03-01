@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken');
 
 // Middleware function to generate JWT
 function generateToken(user) {
-  console.log(user);
   const payload = { id: user.id, isAdmin: user.admin };
   const accessToken = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '1h' });
   return accessToken;
@@ -28,7 +27,19 @@ function authenticateToken(req, res, next) {
   }
 }
 
+function sendCookie(token) {
+  console.log(token);
+  res.cookie('token', token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'strict',
+    maxAge: 24 * 60 * 60 * 1000 // durée de validité du cookie en millisecondes (ici 24 heures)
+  }).sendStatus(200);
+  next();
+}
+
 module.exports = {
   generateToken,
   authenticateToken,
+  sendCookie
 };

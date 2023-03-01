@@ -15,6 +15,7 @@ async function loginUser(req, res) {
         // create a new user object
         let user = result.map(oneUser => new User(oneUser.id, oneUser.nom, oneUser.prenom, oneUser.mail, oneUser.admin, oneUser.mdp));
         const accessToken = Token.generateToken(user);
+        Token.sendCookie(accessToken);
         console.log(accessToken);
         //revoir les codes d'erreur
         //const secret = crypto.randomBytes(64).toString('hex');
@@ -54,27 +55,6 @@ async function allUsers(req, res) {
     }
 }
 
-//vérifie si le token est valide ou non
-const verify = (req, res, next) => {
-    const authHeader = req.headers.authorization;
-    if(authHeader) {
-        const token = authHeader.split(" ")[1];
-        console.log(token);
-        jwt.verify(token, process.env.SECRET_KEY, (err, payload) => {
-            if(err) {
-                //403 c'est quand on a un token mais qu'il n'est pas bon
-                return res.status(403).json("TOUJOURS NON TON TOKEN IL PUE");
-            }
-            req.user = payload;
-            next();
-        })
-     } 
-    // else {
-    //     //401 c'est quand on n'a pas le token
-    //     res.status(401).json("NO");
-    // }
-}
-
 let refreshTokens = [];
 
 const refresh = (req, res) => {
@@ -86,6 +66,5 @@ const refresh = (req, res) => {
 
 module.exports = {
     loginUser,
-    allUsers,
-    verify
+    allUsers
 };
