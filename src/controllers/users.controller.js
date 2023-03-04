@@ -1,7 +1,7 @@
 //la classe User
-const User = require('../models/users.class');
+const User = require('../models/class/users.class');
 //les fonctions liées à user
-const UserFunction = require('../models/users');
+const UserFunction = require('../models/users.model');
 //pour gérer les tokens
 const Token = require('../../session');
 

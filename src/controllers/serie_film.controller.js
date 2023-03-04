@@ -1,5 +1,5 @@
-const Seriefilm = require('../models/serie_film.class');
-const SeriefilmFunction = require('../models/serie_film');
+const Seriefilm = require('../models/class/serie_film.class');
+const SeriefilmFunction = require('../models/serie_film.model');
 
 //fonction qui permet de créer tous les utilisateurs et de les retourner
 async function allSeriefilm(req, res) {
@@ -7,7 +7,7 @@ async function allSeriefilm(req, res) {
     console.log(results);
     if (results.length > 0) {
         // create a new user object
-        let allSeriefilm = results.map(oneSF => new Seriefilm(oneSF.id, oneSF.nom, oneSF.type, oneSF.age_min, oneSF.resume, oneSF.annee, oneSF.id_video, oneSF.actif, oneSF.url, oneSF.cat_id, oneSF.cat_nom));
+        let allSeriefilm = results.map(oneSF => new Seriefilm(oneSF.id, oneSF.nom, oneSF.age_min, oneSF.resume, oneSF.id_bande_annonce, oneSF.url_vignette, oneSF.url_affiche, oneSF.date_sortie, oneSF.id_video, oneSF.cat_id, oneSF.cat_nom));
         res.status(200).json(allSeriefilm);
     } else {
         res.status(500).send('No values');

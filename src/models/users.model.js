@@ -7,7 +7,6 @@ async function getAllUsers() {
     dbConn.connect();
   
     const query = `SELECT * FROM compte`;
-    //console.log(query);
   
     let result;
     try {
@@ -47,7 +46,22 @@ async function connectUser(mail, mdp) {
     return result.rows;
 }
 
+async function modifyInfoUser() {
+    dbConn.connect();
+
+    const query = `SELECT * FROM compte`;
+
+    try {
+        
+    } catch (err) {
+        console.error(err);
+    }
+    //console.log(result.rows);
+    return result.rows;
+}
+
 module.exports = {
     connectUser,
-    getAllUsers
+    getAllUsers,
+    modifyInfoUser
 };

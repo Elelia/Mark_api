@@ -8,7 +8,7 @@ async function getAllSeriefilm() {
         cat.id as cat_id,
         cat.nom as cat_nom,
         sf.*,
-        image.url
+        f.*
         from 
         categorie cat
         inner join
@@ -19,14 +19,14 @@ async function getAllSeriefilm() {
         serie_film sf
         on
         sf.id = csf.id_serie_film
-        left join 
-        image 
-        on 
-        sf.id = image.id_serie_film
+        inner join
+		film f
+		on
+		f.id_serie_film = sf.id
         group by
         cat.id,
         sf.id,
-        image.id
+        f.id
         order by
         cat.id
     `;
@@ -43,17 +43,19 @@ async function getAllSeriefilm() {
 async function getAllCategorie() {
     dbConn.connect();
   
-    const query = `select cat.*
-    from
-    categorie cat
-    inner join
-    categorie_serie_film csf
-    on
-    cat.id = csf.id_categorie
-    group by
-    cat.id
-    order by
-    cat.id`;
+    const query = `
+        select cat.*
+        from
+        categorie cat
+        inner join
+        categorie_serie_film csf
+        on
+        cat.id = csf.id_categorie
+        group by
+        cat.id
+        order by
+        cat.id
+    `;
   
     let result;
     try {
@@ -65,6 +67,7 @@ async function getAllCategorie() {
     return result.rows;
 }
 
+//pas utilisée pour l'instant
 async function getIdCategorie() {
     dbConn.connect();
   
@@ -80,6 +83,7 @@ async function getIdCategorie() {
     return result.rows;
 }
 
+//pas utilisée pour l'instant
 async function getAllSeriefilmByCategorie(id) {
     dbConn.connect();
   
@@ -87,8 +91,7 @@ async function getAllSeriefilmByCategorie(id) {
         select 
         cat.id as cat_id,
         cat.nom as cat_nom,
-        sf.*,
-        image.url
+        sf.*
         from 
         categorie cat
         inner join
@@ -99,14 +102,9 @@ async function getAllSeriefilmByCategorie(id) {
         serie_film sf
         on
         sf.id = csf.id_serie_film
-        left join 
-        image 
-        on 
-        sf.id = image.id_serie_film
         group by
         cat.id,
-        sf.id,
-        image.id
+        sf.id
         order by
         cat.id
     `;
@@ -124,6 +122,5 @@ async function getAllSeriefilmByCategorie(id) {
 module.exports = {
   getAllSeriefilm,
   getIdCategorie,
-  getAllSeriefilmByCategorie,
   getAllCategorie
 };
