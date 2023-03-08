@@ -7,7 +7,7 @@ async function allSeriefilm(req, res) {
     console.log(results);
     if (results.length > 0) {
         // create a new user object
-        let allSeriefilm = results.map(oneSF => new Seriefilm(oneSF.id, oneSF.nom, oneSF.age_min, oneSF.resume, oneSF.id_bande_annonce, oneSF.url_vignette, oneSF.url_affiche, oneSF.date_sortie, oneSF.id_video, oneSF.cat_id, oneSF.cat_nom));
+        let allSeriefilm = results.map(oneSF => new Seriefilm(oneSF.id_serie_film, oneSF.nom, oneSF.age_min, oneSF.resume, oneSF.id_bande_annonce, oneSF.url_vignette, oneSF.url_affiche, oneSF.date_sortie, oneSF.id_video, oneSF.cat_id, oneSF.cat_nom));
         res.status(200).json(allSeriefilm);
     } else {
         res.status(500).send('No values');
@@ -57,7 +57,36 @@ async function allSeriefilmByCategorie(req, res) {
     }
 }
 
+//fonction qui retourne les catégories
+async function addAvis(req, res) {
+    console.log(req.body);
+    var id_compte = req.body.userId;
+    var id_serie_film = req.body.seriefilmId;
+    var comment = req.body.comment;
+    var note = req.body.note;
+    var date = req.body.date;
+    const result = await SeriefilmFunction.insertAvis(id_compte, id_serie_film, comment, note, date);
+    if (result) {
+        res.status(200).json(result);
+    } else {
+        res.status(500).send('Error while insert avis');
+    }
+}
+
+//fonction qui retourne les catégories
+async function allAvis(req, res) {
+    const results = await SeriefilmFunction.getAllAvis(req.params.serie_film_id);
+    if (results.length > 0) {
+        console.log(results);
+        res.status(200).json(results);
+    } else {
+        res.status(500).send('No values');
+    }
+}
+
 module.exports = {
     allSeriefilm,
-    allCategorie
+    allCategorie,
+    addAvis,
+    allAvis
 };

@@ -7,7 +7,9 @@ async function getAllSeriefilm() {
         select 
         cat.id as cat_id,
         cat.nom as cat_nom,
+		sf.id as id_serie_film,
         sf.*,
+		f.id as id_film,
         f.*
         from 
         categorie cat
@@ -119,8 +121,55 @@ async function getAllSeriefilmByCategorie(id) {
     return result.rows;
 }
 
+async function insertAvis(id_compte, id_serie_film, comment, note, date) {
+    dbConn.connect();
+  
+    const query = `
+        insert into
+        avis
+        (id_compte, id_serie_film, commentaire, note, jour)
+        VALUES ($1, $2, $3, $4, $5)
+    `;
+  
+    let result = false;
+    try {
+        await dbConn.query(query, [id_compte, id_serie_film, comment, note, date]);
+        result = true;
+    } catch (err) {
+        console.error(err);
+    }
+    return result;
+}
+
+async function getAllAvis(id) {
+    dbConn.connect();
+  
+    const query = `
+        select
+        avis.*
+        from
+        avis
+        inner join
+        serie_film sf
+        on
+        sf.id = avis.id_serie_film
+        where
+        sf.id = $1
+    `;
+  
+    let result;
+    try {
+        result = await dbConn.query(query, [id]);
+    } catch (err) {
+        console.error(err);
+    }
+    return result.rows;
+}
+
 module.exports = {
   getAllSeriefilm,
   getIdCategorie,
-  getAllCategorie
+  getAllCategorie,
+  insertAvis,
+  getAllAvis
 };

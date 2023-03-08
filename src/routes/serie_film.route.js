@@ -8,4 +8,8 @@ router.get('/', SerieFilm.allSeriefilm);
 
 router.get('/categories', SerieFilm.allCategorie);
 
+router.put('/avis/insert', SerieFilm.addAvis);
+
+router.get('/avis/:serie_film_id', SerieFilm.allAvis);
+
 module.exports = router;

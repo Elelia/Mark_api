@@ -49,7 +49,7 @@ async function connectUser(mail, mdp) {
 async function modifyInfoUser() {
     dbConn.connect();
 
-    const query = `SELECT * FROM compte`;
+    const query = `UPDATE compte SET mdp = $2 WHERE mail=$1`;
 
     try {
         
