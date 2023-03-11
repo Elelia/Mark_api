@@ -42,7 +42,50 @@ async function allUsers(req, res) {
     }
 }
 
+async function modifyUser(req, res) {
+    var id = req.body.userId;
+    var mdp = req.body.verifpassword;
+    var oldmdp = req.body.oldpassword;
+    var newmdp = req.body.newpassword;
+    var mail = req.body.mail;
+    var nom = req.body.nom;
+    var prenom = req.body.prenom;
+    const result = await UserFunction.checkPassword(id, mdp);
+    if (result) {
+        
+        res.status(200).json({
+            success: true,
+            message: 'Login successful',
+            user: user,
+            token: accessToken
+        });
+    } else {
+        res.status(400).json({
+            success: false,
+            message: 'Login failed'
+        });
+    }
+}
+
+async function userById(req, res) {
+    console.log(req.params.id);
+    const result = await UserFunction.getUserById(req.params.id);
+    console.log(result);
+    if (result.length > 0) {
+        // create a new user object
+        let user = result.map(oneUser => new User(oneUser.id, oneUser.nom, oneUser.prenom, oneUser.mail, oneUser.admin, oneUser.mdp));
+        //revoir les codes d'erreur
+        res.status(200).json(user);
+    } else {
+        res.status(400).json({
+            success: false,
+            message: 'get user by id failed'
+        });
+    }
+}
+
 module.exports = {
     loginUser,
-    allUsers
+    allUsers,
+    userById
 };

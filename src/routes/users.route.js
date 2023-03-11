@@ -14,4 +14,6 @@ router.get('/auth/test/:id', Users.allUsers);
 
 router.post('/auth/refresh/');
 
+router.get('/user/:id', Users.userById);
+
 module.exports = router;

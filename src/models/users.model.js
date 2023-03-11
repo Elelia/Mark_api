@@ -3,7 +3,6 @@ const bcrypt = require('bcrypt');
 
 //all users
 async function getAllUsers() {
-    //console.log(mail);
     dbConn.connect();
   
     const query = `SELECT * FROM compte`;
@@ -46,10 +45,27 @@ async function connectUser(mail, mdp) {
     return result.rows;
 }
 
-async function modifyInfoUser() {
+//get user by id
+async function getUserById(id) {
+    dbConn.connect();
+    console.log(id);
+  
+    const query = `SELECT * FROM compte where id = $1`;
+  
+    let result;
+    try {
+        result = await dbConn.query(query, [id]);
+    } catch (err) {
+        console.error(err);
+    }
+    return result.rows;
+}
+
+//modifie les informations d'un compte donné par l'id
+async function updateUser(id, mdp, nom, prenom, mail) {
     dbConn.connect();
 
-    const query = `UPDATE compte SET mdp = $2 WHERE mail=$1`;
+    const query = `UPDATE compte SET mdp = $2, nom = $3, prenom = $4, mail = $5 WHERE mail=$1`;
 
     try {
         
@@ -60,8 +76,30 @@ async function modifyInfoUser() {
     return result.rows;
 }
 
+//connect one user
+async function checkPassword(id, mdp) {
+    dbConn.connect();
+  
+    const query = `SELECT mdp FROM compte WHERE id=$1`;
+  
+    let result = false;
+    try {
+        //donc si y a une erreur de mdp il gère pas bien l'erreur et crash
+        res = await dbConn.query(query1, [id]);
+        hash = res.rows[0].mdp;
+        //let hash = await bcrypt.hash(password, 10);
+        //await dbConn.query(query3, [mail, hash]);
+        result = await bcrypt.compare(mdp, hash);
+    } catch (err) {
+        console.error(err);
+    }
+    return result;
+}
+
 module.exports = {
     connectUser,
     getAllUsers,
-    modifyInfoUser
+    getUserById,
+    updateUser,
+    checkPassword
 };
