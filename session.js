@@ -1,4 +1,6 @@
 const jwt = require('jsonwebtoken');
+const { addToBlacklist } = require('../utils/token');
+const { getBlacklist } = require('../utils/token');
 
 //génère un token à la connection de l'utilisateur
 function generateToken(user) {
@@ -13,14 +15,20 @@ function authenticateToken(req, res, next) {
   if(authHeader) {
     const token = authHeader.split(" ")[1];
     console.log(token);
-    jwt.verify(token, process.env.SECRET_KEY, (err, payload) => {
-      if(err) {
-        //403 c'est quand on a un token mais qu'il n'est pas bon
-        return res.status(403).json("Your token is incorrect");
-      }
-      req.user = payload;
-      next();
-    })
+    const blacklist = getBlacklist();
+    if (blacklist.includes(token)) {
+      // token has been blacklisted, reject it
+      res.sendStatus(401).json("token is blacklisted");
+    } else {
+      jwt.verify(token, process.env.SECRET_KEY, (err, payload) => {
+        if(err) {
+          //403 c'est quand on a un token mais qu'il n'est pas bon
+          return res.status(403).json("Your token is incorrect");
+        }
+        req.user = payload;
+        next();
+      })
+    }
   } else {
     //401 c'est quand on n'a pas le token
     res.status(401).json("You don't have any token");
@@ -75,9 +83,25 @@ function setTokenCookie(res, token) {
   });
 }
 
+//quand l'utilisateur se logout
+function blacklistToken(req, res, next) {
+  try {
+    const token = req.cookies.token;
+    // add token to blacklist
+    addToBlacklist(token);
+    // clear cookie
+    res.clearCookie('token');
+    next();
+  } catch (err) {
+    console.error(err);
+    res.sendStatus(500);
+  }
+}
+
 module.exports = {
   generateToken,
   authenticateToken,
   refreshToken,
-  setTokenCookie
+  setTokenCookie,
+  blacklistToken
 };

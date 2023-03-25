@@ -84,8 +84,18 @@ async function userById(req, res) {
     }
 }
 
+//fonction qui permet de connecter un utilisateur
+async function logoutUser(req, res) {
+    Token.blacklistToken();
+    res.status(200).json({
+        success: true,
+        message: 'Logout successful'
+    });
+}
+
 module.exports = {
     loginUser,
     allUsers,
-    userById
+    userById,
+    logoutUser
 };
