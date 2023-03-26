@@ -86,7 +86,7 @@ async function userById(req, res) {
 
 //fonction qui permet de connecter un utilisateur
 async function logoutUser(req, res) {
-    Token.blacklistToken();
+    Token.clearTokenCookie(req, res);
     res.status(200).json({
         success: true,
         message: 'Logout successful'

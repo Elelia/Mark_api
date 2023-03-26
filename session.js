@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
-const { addToBlacklist } = require('../utils/token');
-const { getBlacklist } = require('../utils/token');
+// const { addToBlacklist } = require('../utils/token');
+// const { getBlacklist } = require('../utils/token');
 
 //génère un token à la connection de l'utilisateur
 function generateToken(user) {
@@ -15,11 +15,11 @@ function authenticateToken(req, res, next) {
   if(authHeader) {
     const token = authHeader.split(" ")[1];
     console.log(token);
-    const blacklist = getBlacklist();
-    if (blacklist.includes(token)) {
+    //const blacklist = getBlacklist();
+    //if (blacklist.includes(token)) {
       // token has been blacklisted, reject it
-      res.sendStatus(401).json("token is blacklisted");
-    } else {
+      //res.sendStatus(401).json("token is blacklisted");
+    //} else {
       jwt.verify(token, process.env.SECRET_KEY, (err, payload) => {
         if(err) {
           //403 c'est quand on a un token mais qu'il n'est pas bon
@@ -28,7 +28,7 @@ function authenticateToken(req, res, next) {
         req.user = payload;
         next();
       })
-    }
+    //}
   } else {
     //401 c'est quand on n'a pas le token
     res.status(401).json("You don't have any token");
@@ -77,31 +77,39 @@ function setTokenCookie(res, token) {
   // Configuration du cookie avec le token JWT
   res.cookie('token', token, {
     httpOnly: true, // Empêcher l'accès au cookie depuis le code JavaScript côté client
-    secure: true, // Utiliser uniquement pour les connexions HTTPS
+    //secure: true, // Utiliser uniquement pour les connexions HTTPS
     sameSite: 'strict', // Empêcher les attaques CSRF
     maxAge: 3600000, // Temps d'expiration du cookie en millisecondes (1 heure)
   });
 }
 
-//quand l'utilisateur se logout
-function blacklistToken(req, res, next) {
+function clearTokenCookie(req, res) {
   try {
-    const token = req.cookies.token;
-    // add token to blacklist
-    addToBlacklist(token);
-    // clear cookie
     res.clearCookie('token');
-    next();
-  } catch (err) {
-    console.error(err);
-    res.sendStatus(500);
+  } catch(error) {
+    res.status(500).send(error);
   }
 }
+
+//quand l'utilisateur se logout
+// function blacklistToken(req, res, next) {
+//   try {
+//     const token = req.cookies.token;
+//     // add token to blacklist
+//     addToBlacklist(token);
+//     // clear cookie
+//     res.clearCookie('token');
+//     next();
+//   } catch (err) {
+//     console.error(err);
+//     res.sendStatus(500);
+//   }
+// }
 
 module.exports = {
   generateToken,
   authenticateToken,
   refreshToken,
   setTokenCookie,
-  blacklistToken
+  clearTokenCookie
 };

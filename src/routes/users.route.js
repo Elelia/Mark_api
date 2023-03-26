@@ -16,6 +16,6 @@ router.post('/auth/refresh/');
 
 router.get('/user/:id', Users.userById);
 
-router.post('/auth/logout');
+router.post('/auth/logout', Users.logoutUser);
 
 module.exports = router;
