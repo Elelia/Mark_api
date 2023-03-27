@@ -77,7 +77,7 @@ function setTokenCookie(res, token) {
   // Configuration du cookie avec le token JWT
   res.cookie('token', token, {
     httpOnly: true, // Empêcher l'accès au cookie depuis le code JavaScript côté client
-    //secure: true, // Utiliser uniquement pour les connexions HTTPS
+    secure: true, // Utiliser uniquement pour les connexions HTTPS
     sameSite: 'strict', // Empêcher les attaques CSRF
     maxAge: 3600000, // Temps d'expiration du cookie en millisecondes (1 heure)
   });
