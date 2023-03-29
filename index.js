@@ -9,17 +9,17 @@ const cookieParser = require('cookie-parser');
 
 app.use(cors());
 
-app.use(function(req, res, next) {
+/*app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "https://mark-website-sigma.vercel.app");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   res.header('Access-Control-Allow-Credentials', true);
   res.header('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
   next();
-});
+});*/
 
-//app.use(cors({
-//  origin: 'http://localhost:3000'
-//}));
+app.use(cors({
+  origin: 'http://localhost:3000'
+}));
 
 //parse request data content type application/x-www
 app.use(bodyParser.urlencoded({extended: false}));

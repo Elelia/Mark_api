@@ -64,7 +64,7 @@ function refreshToken(req, res, next) {
     // Envoie le nouveau token au client dans un cookie sécurisé
     res.cookie('token', newToken, {
       httpOnly: true,
-      secure: true,
+      //secure: true,
       sameSite: 'strict',
       maxAge: 24 * 60 * 60 * 1000 // Durée de validité du cookie (ici 24 heures)
     });
@@ -128,6 +128,5 @@ module.exports = {
   authenticateToken,
   refreshToken,
   setTokenCookie,
-  clearTokenCookie,
-  allowCors
+  clearTokenCookie
 };
