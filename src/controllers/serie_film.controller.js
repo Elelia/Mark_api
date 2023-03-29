@@ -84,7 +84,7 @@ async function allAvis(req, res) {
     const results = await SeriefilmFunction.getAllAvis(req.params.serie_film_id);
     if (results.length > 0) {
         console.log(results);
-        Session.allowCors(handler)
+        //Session.allowCors(handler);
         res.status(200).json(results);
     } else {
         res.status(500).send('No values');
