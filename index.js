@@ -9,6 +9,12 @@ const cookieParser = require('cookie-parser');
 
 app.use(cors());
 
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "https://mark-website-sigma.vercel.app");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 //app.use(cors({
 //  origin: 'http://localhost:3000'
 //}));
