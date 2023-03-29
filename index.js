@@ -7,9 +7,7 @@ var cors = require('cors');
 //const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 
-app.use(cors({
-  origin: 'https://mark-website-sigma.vercel.app'
-}));
+app.use(cors());
 
 //app.use(cors({
 //  origin: 'http://localhost:3000'
