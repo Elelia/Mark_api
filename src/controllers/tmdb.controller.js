@@ -10,7 +10,6 @@ async function insertMultipleMovie(req, res) {
         }
         const movies = JSON.parse(data);
         const movieIds = movies.map(movie => movie.id);
-        console.log(movieIds);
       
         // Loop through movie IDs and retrieve data for each movie
         for (const movieId of movieIds) {

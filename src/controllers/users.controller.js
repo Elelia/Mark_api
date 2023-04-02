@@ -68,9 +68,7 @@ async function modifyUser(req, res) {
 }
 
 async function userById(req, res) {
-    console.log(req.params.id);
     const result = await UserFunction.getUserById(req.params.id);
-    console.log(result);
     if (result.length > 0) {
         // create a new user object
         let user = result.map(oneUser => new User(oneUser.id, oneUser.nom, oneUser.prenom, oneUser.mail, oneUser.admin, oneUser.mdp));

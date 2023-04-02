@@ -4,7 +4,7 @@ const router = express.Router();
 
 const Tmdb = require('../controllers/tmdb.controller');
 
-//router.put('/movies', Tmdb.insertMultipleMovie);
+router.put('/movies', Tmdb.insertMultipleMovie);
 
 //router.put('/categories', Tmdb.insertAllCategorie);
 

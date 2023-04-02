@@ -17,9 +17,9 @@ app.use(cors());
   next();
 });*/
 
-app.use(cors({
+/*app.use(cors({
   origin: 'http://localhost:3000'
-}));
+}));*/
 
 //parse request data content type application/x-www
 app.use(bodyParser.urlencoded({extended: false}));

@@ -2,11 +2,6 @@ const Seriefilm = require('../models/class/serie_film.class');
 const SeriefilmFunction = require('../models/serie_film.model');
 const Session = require('../../session');
 
-const handler = (req, res) => {
-    const d = new Date()
-    res.end(d.toString())
-}
-
 //fonction qui permet de créer tous les utilisateurs et de les retourner
 async function allSeriefilm(req, res) {
     const results = await SeriefilmFunction.getAllSeriefilm();
