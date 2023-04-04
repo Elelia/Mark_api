@@ -8,6 +8,6 @@ router.put('/movies', Tmdb.insertMultipleMovie);
 
 //router.put('/categories', Tmdb.insertAllCategorie);
 
-//router.put('/discover', Tmdb.insertSomeMovie);
+router.put('/discover', Tmdb.insertSomeMovie);
 
 module.exports = router;
