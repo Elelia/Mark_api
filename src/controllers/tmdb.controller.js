@@ -45,8 +45,33 @@ async function insertSomeMovie(req, res) {
     })
 }
 
+async function insertSomeSerie(req, res) {
+    await TMDBFuction.insertSerie();
+    res.status(200).json({
+        success: true,
+        message: 'Insert categorie successful'
+    })
+}
+
+async function insertCategorieSerie(req, res) {
+    const result = await TMDBFuction.insertCategorieSerie();
+    if(result) {
+        res.status(200).json({
+            success: true,
+            message: 'Insert categorie successful'
+        })
+    } else {
+        res.status(400).json({
+            success: false,
+            message: 'Error while insert categorie'
+        })
+    } 
+}
+
 module.exports = {
     insertMultipleMovie,
     insertAllCategorie,
-    insertSomeMovie
+    insertSomeMovie,
+    insertSomeSerie,
+    insertCategorieSerie
 };

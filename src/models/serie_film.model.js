@@ -1,6 +1,6 @@
 const dbConn = require('../../dbconfig');
 
-async function getAllSeriefilm() {
+async function getAllFilm() {
     dbConn.connect();
   
     const query = `
@@ -42,7 +42,7 @@ async function getAllSeriefilm() {
     return result.rows;
 }
 
-async function getAllCategorie() {
+async function getAllCategorieFilm() {
     dbConn.connect();
   
     const query = `
@@ -53,6 +53,14 @@ async function getAllCategorie() {
         categorie_serie_film csf
         on
         cat.id = csf.id_categorie
+        inner join
+		serie_film sf
+		on
+		csf.id_serie_film = sf.id
+		inner join
+		film
+		on
+		sf.id = film.id_serie_film
         group by
         cat.id
         order by
@@ -167,9 +175,9 @@ async function getAllAvis(id) {
 }
 
 module.exports = {
-  getAllSeriefilm,
+  getAllFilm,
   getIdCategorie,
-  getAllCategorie,
+  getAllCategorieFilm,
   insertAvis,
   getAllAvis
 };

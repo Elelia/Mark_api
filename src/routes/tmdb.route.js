@@ -10,4 +10,8 @@ router.put('/movies', Tmdb.insertMultipleMovie);
 
 router.put('/discover', Tmdb.insertSomeMovie);
 
+router.put('/serie', Tmdb.insertSomeSerie);
+
+router.put('/seriecat', Tmdb.insertCategorieSerie);
+
 module.exports = router;

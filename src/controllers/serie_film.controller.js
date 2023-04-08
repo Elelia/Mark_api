@@ -4,7 +4,7 @@ const Session = require('../../session');
 
 //fonction qui permet de créer tous les utilisateurs et de les retourner
 async function allSeriefilm(req, res) {
-    const results = await SeriefilmFunction.getAllSeriefilm();
+    const results = await SeriefilmFunction.getAllFilm();
     console.log(results);
     if (results.length > 0) {
         // create a new user object
@@ -17,7 +17,7 @@ async function allSeriefilm(req, res) {
 
 //fonction qui retourne les catégories
 async function allCategorie(req, res) {
-    const results = await SeriefilmFunction.getAllCategorie();
+    const results = await SeriefilmFunction.getAllCategorieFilm();
     if (results.length > 0) {
         res.status(200).json(results);
     } else {
