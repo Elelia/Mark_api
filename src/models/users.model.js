@@ -95,10 +95,41 @@ async function checkPassword(id, mdp) {
     return result;
 }
 
+//get user by mail
+async function getUserByMail(mail) {
+    dbConn.connect();
+  
+    const query = `SELECT * FROM compte where mail = $1`;
+  
+    let result;
+    try {
+        result = await dbConn.query(query, [mail]);
+    } catch (err) {
+        console.error(err);
+    }
+    return result.rows;
+}
+
+//insert user
+async function insertUser(nom, prenom, mail, admin, mdp) {
+    dbConn.connect();
+  
+    const query = `insert into compte (nom, prenom, mail, admin, mdp) values ($1, $2, $3, $4, $5)`;
+  
+    try {
+        await dbConn.query(query, [nom, prenom, mail, admin, mdp]);
+    } catch (err) {
+        console.error(err);
+    }
+    return true;
+}
+
 module.exports = {
     connectUser,
     getAllUsers,
     getUserById,
     updateUser,
-    checkPassword
+    checkPassword,
+    getUserByMail,
+    insertUser
 };

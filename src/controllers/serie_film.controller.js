@@ -2,10 +2,9 @@ const Seriefilm = require('../models/class/serie_film.class');
 const SeriefilmFunction = require('../models/serie_film.model');
 const Session = require('../../session');
 
-//fonction qui permet de créer tous les utilisateurs et de les retourner
-async function allSeriefilm(req, res) {
+//fonction qui retourne tous les fimms
+async function allFilm(req, res) {
     const results = await SeriefilmFunction.getAllFilm();
-    console.log(results);
     if (results.length > 0) {
         // create a new user object
         let allSeriefilm = results.map(oneSF => new Seriefilm(oneSF.id_serie_film, oneSF.nom, oneSF.age_min, oneSF.resume, oneSF.id_bande_annonce, oneSF.url_vignette, oneSF.url_affiche, oneSF.date_sortie, oneSF.id_video, oneSF.cat_id, oneSF.cat_nom));
@@ -15,9 +14,31 @@ async function allSeriefilm(req, res) {
     }
 }
 
-//fonction qui retourne les catégories
-async function allCategorie(req, res) {
+//fonction qui retourne les catégories des films
+async function allCategorieFilm(req, res) {
     const results = await SeriefilmFunction.getAllCategorieFilm();
+    if (results.length > 0) {
+        res.status(200).json(results);
+    } else {
+        res.status(500).send('No values');
+    }
+}
+
+//fonction qui retourne toutes les séries
+async function allSerie(req, res) {
+    const results = await SeriefilmFunction.getAllSerie();
+    if (results.length > 0) {
+        // create a new user object
+        let allSeriefilm = results.map(oneSF => new Seriefilm(oneSF.id_serie_film, oneSF.nom, oneSF.age_min, oneSF.resume, oneSF.id_bande_annonce, oneSF.url_vignette, oneSF.url_affiche, oneSF.date_sortie, oneSF.id_video, oneSF.cat_id, oneSF.cat_nom));
+        res.status(200).json(allSeriefilm);
+    } else {
+        res.status(500).send('No values');
+    }
+}
+
+//fonction qui retourne les catégories des séries
+async function allCategorieSerie(req, res) {
+    const results = await SeriefilmFunction.getAllCategorieSerie();
     if (results.length > 0) {
         res.status(200).json(results);
     } else {
@@ -74,11 +95,10 @@ async function addAvis(req, res) {
     }
 }
 
-//fonction qui retourne les catégories
+//fonction qui retourne tous les avis
 async function allAvis(req, res) {
     const results = await SeriefilmFunction.getAllAvis(req.params.serie_film_id);
     if (results.length > 0) {
-        console.log(results);
         //Session.allowCors(handler);
         res.status(200).json(results);
     } else {
@@ -86,9 +106,22 @@ async function allAvis(req, res) {
     }
 }
 
+//
+async function oneUrlVideo(req, res) {
+    const results = await SeriefilmFunction.getUrlVideo(req.params.id_video);
+    if (results.length > 0) {
+        res.status(200).json(results);
+    } else {
+        res.status(500).send('No values');
+    }
+}
+
 module.exports = {
-    allSeriefilm,
-    allCategorie,
+    allFilm,
+    allCategorieFilm,
+    allSerie,
+    allCategorieSerie,
     addAvis,
-    allAvis
+    allAvis,
+    oneUrlVideo
 };

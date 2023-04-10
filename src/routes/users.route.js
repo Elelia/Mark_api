@@ -18,4 +18,8 @@ router.get('/user/:id', Users.userById);
 
 router.post('/auth/logout', Users.logoutUser);
 
+router.get('/user/mail/:mail', Users.userByMail);
+
+router.put('/create', Users.createOneUser);
+
 module.exports = router;

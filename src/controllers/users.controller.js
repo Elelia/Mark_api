@@ -91,9 +91,33 @@ async function logoutUser(req, res) {
     });
 }
 
+async function userByMail(req, res) {
+    const result = await UserFunction.getUserByMail(req.params.mail);
+    if (result.length > 0) {
+        // create a new user object
+        let user = result.map(oneUser => new User(oneUser.id, oneUser.nom, oneUser.prenom, oneUser.mail, oneUser.admin, oneUser.mdp));
+        //revoir les codes d'erreur
+        res.status(200).json(user);
+    } else {
+        res.status(200).json({
+            message: 'no user with this mail'
+        });
+    }
+}
+
+async function createOneUser(req, res) {
+    await UserFunction.insertUser(req.body.nom, req.body.prenom, req.body.mail, req.body.admin, req.body.mdp);
+    res.status(200).json({
+        success: true,
+        message: 'insert new user into compte'
+    });
+}
+
 module.exports = {
     loginUser,
     allUsers,
     userById,
-    logoutUser
+    logoutUser,
+    userByMail,
+    createOneUser
 };

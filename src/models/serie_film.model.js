@@ -93,6 +93,76 @@ async function getIdCategorie() {
     return result.rows;
 }
 
+async function getAllSerie() {
+    dbConn.connect();
+  
+    const query = `
+        select 
+        cat.id as cat_id,
+        cat.nom as cat_nom,
+        sf.id as id_serie_film,
+        sf.*
+        from 
+        categorie cat
+        inner join
+        categorie_serie_film csf
+        on
+        cat.id = csf.id_categorie
+        inner join
+        serie_film sf
+        on
+        sf.id = csf.id_serie_film
+        where
+        sf.id not in (select id_serie_film from film)
+        group by
+        cat.id,
+        sf.id
+        order by
+        cat.id
+    `;
+  
+    let result;
+    try {
+        result = await dbConn.query(query);
+    } catch (err) {
+        console.error(err);
+    }
+    return result.rows;
+}
+
+async function getAllCategorieSerie() {
+    dbConn.connect();
+  
+    const query = `
+        select cat.*
+        from
+        categorie cat
+        inner join
+        categorie_serie_film csf
+        on
+        cat.id = csf.id_categorie
+        inner join
+		serie_film sf
+		on
+		csf.id_serie_film = sf.id
+		where
+		sf.id not in (select id_serie_film from film)
+        group by
+        cat.id
+        order by
+        cat.id
+    `;
+  
+    let result;
+    try {
+        result = await dbConn.query(query);
+    } catch (err) {
+        console.error(err);
+    }
+    //console.log(result.rows);
+    return result.rows;
+}
+
 //pas utilisée pour l'instant
 async function getAllSeriefilmByCategorie(id) {
     dbConn.connect();
@@ -174,10 +244,33 @@ async function getAllAvis(id) {
     return result.rows;
 }
 
+async function getUrlVideo(id) {
+    dbConn.connect();
+
+    const query = `
+    select 
+    url
+    from 
+    video
+    where
+    id = $1
+    `;
+
+    try {
+        result = await dbConn.query(query, [id]);
+    } catch(err) {
+        console.error(err);
+    }
+    return result.rows;
+}
+
 module.exports = {
   getAllFilm,
   getIdCategorie,
   getAllCategorieFilm,
   insertAvis,
-  getAllAvis
+  getAllAvis,
+  getUrlVideo,
+  getAllCategorieSerie,
+  getAllSerie
 };
