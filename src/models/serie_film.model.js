@@ -248,17 +248,65 @@ async function getUrlVideo(id) {
     dbConn.connect();
 
     const query = `
-    select 
-    url
-    from 
-    video
-    where
-    id = $1
+        select 
+        url
+        from 
+        video
+        where
+        id = $1
     `;
 
     try {
         result = await dbConn.query(query, [id]);
     } catch(err) {
+        console.error(err);
+    }
+    return result.rows;
+}
+
+//pas utilisée pour l'instant
+async function getFilmByCategorieId(id) {
+    dbConn.connect();
+  
+    const query = `
+        select
+        sf.id_serie_film,
+        sf.nom,
+        sf.resume,
+        sf.age_min,
+        cat.cat_id,
+        cat.cat_nom,
+        f.date_sortie,
+        sf.url_vignette,
+        sf.url_affiche,
+        trailer.url,
+        trailer.id_bande_annonce
+        from
+        categorie cat
+        inner join
+        categorie_serie_film csf
+        on
+        cat.id = csf.id_categorie
+        inner join
+        serie_film sf
+        on
+        sf.id = csf.id_serie_film
+        inner join
+        film f
+        on
+        f.id_serie_film = sf.id
+        inner join
+        video trailer
+        on
+        sf.id_bande_annonce = trailer.id
+        where
+        cat.id = $1
+    `;
+  
+    let result;
+    try {
+        result = await dbConn.query(query, [id]);
+    } catch (err) {
         console.error(err);
     }
     return result.rows;
@@ -272,5 +320,6 @@ module.exports = {
   getAllAvis,
   getUrlVideo,
   getAllCategorieSerie,
-  getAllSerie
+  getAllSerie,
+  getFilmByCategorieId
 };
