@@ -1,7 +1,6 @@
 const dbConn = require('../../dbconfig');
 
 async function getAllFilm() {
-    dbConn.connect();
   
     const query = `
         select 
@@ -32,18 +31,23 @@ async function getAllFilm() {
         order by
         cat.id
     `;
-  
-    let result;
+
     try {
-        result = await dbConn.query(query);
+        const client = await dbConn.connect();
+        //console.log('connected');
+
+        const res = await client.query(query);
+        //console.log('Query result:', res.rows);
+
+        client.release();
+        //console.log('disconnected');
+        return res.rows;
     } catch (err) {
         console.error(err);
     }
-    return result.rows;
 }
 
 async function getAllCategorieFilm() {
-    dbConn.connect();
   
     const query = `
         select cat.*
@@ -69,32 +73,41 @@ async function getAllCategorieFilm() {
   
     let result;
     try {
-        result = await dbConn.query(query);
+        //on ouvre la connexion
+        const client = await dbConn.connect();
+
+        //on exécute la requête
+        const res = await client.query(query);
+
+        //on ferme la connexion
+        client.release();
+        return res.rows;
     } catch (err) {
         console.error(err);
     }
-    //console.log(result.rows);
-    return result.rows;
 }
 
-//pas utilisée pour l'instant
 async function getIdCategorie() {
-    dbConn.connect();
   
     const query = `SELECT id  FROM categorie`;
   
     let result;
     try {
-        result = await dbConn.query(query);
+        //on ouvre la connexion
+        const client = await dbConn.connect();
+
+        //on exécute la requête
+        const res = await client.query(query);
+
+        //on ferme la connexion
+        client.release();
+        return res.rows;
     } catch (err) {
         console.error(err);
     }
-    //console.log(result.rows);
-    return result.rows;
 }
 
 async function getAllSerie() {
-    dbConn.connect();
   
     const query = `
         select 
@@ -123,15 +136,21 @@ async function getAllSerie() {
   
     let result;
     try {
-        result = await dbConn.query(query);
+        //on ouvre la connexion
+        const client = await dbConn.connect();
+
+        //on exécute la requête
+        const res = await client.query(query);
+
+        //on ferme la connexion
+        client.release();
+        return res.rows;
     } catch (err) {
         console.error(err);
     }
-    return result.rows;
 }
 
 async function getAllCategorieSerie() {
-    dbConn.connect();
   
     const query = `
         select cat.*
@@ -155,12 +174,18 @@ async function getAllCategorieSerie() {
   
     let result;
     try {
-        result = await dbConn.query(query);
+        //on ouvre la connexion
+        const client = await dbConn.connect();
+
+        //on exécute la requête
+        const res = await client.query(query);
+
+        //on ferme la connexion
+        client.release();
+        return res.rows;
     } catch (err) {
         console.error(err);
     }
-    //console.log(result.rows);
-    return result.rows;
 }
 
 //pas utilisée pour l'instant
@@ -211,12 +236,20 @@ async function insertAvis(id_compte, id_serie_film, comment, note) {
   
     let result = false;
     try {
-        await dbConn.query(query, [id_compte, id_serie_film, comment, note]);
+        //on ouvre la connexion
+        const client = await dbConn.connect();
+
+        //on exécute la requête
+        await client.query(query, [id_compte, id_serie_film, comment, note]);
+
+        //on ferme la connexion
+        client.release();
         result = true;
+        // await dbConn.query(query, [id_compte, id_serie_film, comment, note]);
+        // result = true;
     } catch (err) {
         console.error(err);
     }
-    console.log(result);
     return result;
 }
 
@@ -238,11 +271,19 @@ async function getAllAvis(id) {
   
     let result;
     try {
-        result = await dbConn.query(query, [id]);
+        //on ouvre la connexion
+        const client = await dbConn.connect();
+
+        //on exécute la requête
+        const res = await client.query(query, [id]);
+
+        //on ferme la connexion
+        client.release();
+        return res.rows;
     } catch (err) {
         console.error(err);
     }
-    return result.rows;
+    //return result.rows;
 }
 
 async function getUrlVideo(id) {
@@ -258,11 +299,19 @@ async function getUrlVideo(id) {
     `;
 
     try {
-        result = await dbConn.query(query, [id]);
+        //on ouvre la connexion
+        const client = await dbConn.connect();
+
+        //on exécute la requête
+        const res = await client.query(query, [id]);
+
+        //on ferme la connexion
+        client.release();
+        return res.rows;
     } catch(err) {
         console.error(err);
     }
-    return result.rows;
+    //return result.rows;
 }
 
 //pas utilisée pour l'instant
@@ -311,11 +360,19 @@ async function getFilmByCategorieId(id) {
   
     let result;
     try {
-        result = await dbConn.query(query, [id]);
+        //on ouvre la connexion
+        const client = await dbConn.connect();
+
+        //on exécute la requête
+        const res = await client.query(query, [id]);
+
+        //on ferme la connexion
+        client.release();
+        return res.rows;
     } catch (err) {
         console.error(err);
     }
-    return result.rows;
+    //return result.rows;
 }
 
 module.exports = {

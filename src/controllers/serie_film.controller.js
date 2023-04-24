@@ -7,19 +7,21 @@ const Session = require('../../session');
 //fonction qui retourne tous les fimms
 async function allFilm(req, res) {
     const results = await SeriefilmFunction.getAllFilm();
-    if (results.length > 0) {
+    console.log(results);
+    if (results) {
+        //console.log(results);
         // create a new user object
-        let allSeriefilm = results.map(oneSF => new Seriefilm(oneSF.id_serie_film, oneSF.nom, oneSF.age_min, oneSF.resume, oneSF.id_bande_annonce, oneSF.url_vignette, oneSF.url_affiche, oneSF.date_sortie, oneSF.id_video, oneSF.cat_id, oneSF.cat_nom));
-        res.status(200).json(allSeriefilm);
+        //let allSeriefilm = results.map(oneSF => new Seriefilm(oneSF.id_serie_film, oneSF.nom, oneSF.age_min, oneSF.resume, oneSF.id_bande_annonce, oneSF.url_vignette, oneSF.url_affiche, oneSF.date_sortie, oneSF.id_video, oneSF.cat_id, oneSF.cat_nom));
+        res.status(200).json(results);
     } else {
         res.status(404).send('No values');
-    }
+    }  
 }
 
 //fonction qui retourne les catégories des films
 async function allCategorieFilm(req, res) {
     const results = await SeriefilmFunction.getAllCategorieFilm();
-    if (results.length > 0) {
+    if (results) {
         res.status(200).json(results);
     } else {
         res.status(404).send('No values');
@@ -29,7 +31,7 @@ async function allCategorieFilm(req, res) {
 //fonction qui retourne toutes les séries
 async function allSerie(req, res) {
     const results = await SeriefilmFunction.getAllSerie();
-    if (results.length > 0) {
+    if (results) {
         // create a new user object
         let allSeriefilm = results.map(oneSF => new Seriefilm(oneSF.id_serie_film, oneSF.nom, oneSF.age_min, oneSF.resume, oneSF.id_bande_annonce, oneSF.url_vignette, oneSF.url_affiche, oneSF.date_sortie, oneSF.id_video, oneSF.cat_id, oneSF.cat_nom));
         res.status(200).json(allSeriefilm);
@@ -41,7 +43,7 @@ async function allSerie(req, res) {
 //fonction qui retourne les catégories des séries
 async function allCategorieSerie(req, res) {
     const results = await SeriefilmFunction.getAllCategorieSerie();
-    if (results.length > 0) {
+    if (results) {
         res.status(200).json(results);
     } else {
         res.status(404).send('No values');
@@ -82,7 +84,7 @@ async function allSeriefilmByCategorie(req, res) {
 }
 
 //fonction qui retourne les catégories
-async function addAvis(req, res, next) {
+async function addAvis(req, res) {
     var id_compte = req.body.userId;
     var id_serie_film = req.body.seriefilmId;
     var comment = req.body.comment;
@@ -93,7 +95,6 @@ async function addAvis(req, res, next) {
     const result = await SeriefilmFunction.insertAvis(id_compte, id_serie_film, comment, note, date);
     if (result) {
         res.status(201).json(result);
-        next();
     } else {
         res.status(500).send('Error while insert avis');
     }
@@ -103,7 +104,7 @@ async function addAvis(req, res, next) {
 async function allAvis(req, res) {
     const results = await SeriefilmFunction.getAllAvis(req.params.serie_film_id);
     console.log(results);
-    if (results.length > 0) {
+    if (results) {
         res.status(200).json(results);
     } else {
         res.status(500).send('No values');
@@ -113,7 +114,7 @@ async function allAvis(req, res) {
 //
 async function oneUrlVideo(req, res) {
     const results = await SeriefilmFunction.getUrlVideo(req.params.id_video);
-    if (results.length > 0) {
+    if (results) {
         res.status(200).json(results);
     } else {
         res.status(500).send('No values');
@@ -123,7 +124,7 @@ async function oneUrlVideo(req, res) {
 //fonction qui retourne les informations de films de l'id de la catégorie reçu
 async function filmByCategorieId(req, res) {
     const results = await SeriefilmFunction.getFilmByCategorieId(req.params.cat_id);
-    if (results.length > 0) {
+    if (results) {
         let allSeriefilm = results.map(oneSF => new Seriefilm(oneSF.id_serie_film, oneSF.nom, oneSF.age_min, oneSF.resume, oneSF.id_bande_annonce, oneSF.url_vignette, oneSF.url_affiche, oneSF.date_sortie, oneSF.id_video, oneSF.cat_id, oneSF.cat_nom));
         res.status(200).json(allSeriefilm);
     } else {
