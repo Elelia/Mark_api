@@ -1,7 +1,7 @@
 const dbConn = require('../../dbconfig');
 const axios = require("axios");
 
-//insert movie in serie_film, film and categorie_serie_film with TMDB
+//insert movie in serie_film, film and categorie_serie_film with TMDB start DDB
 async function insertMovie(movieId) {
     try {
         const query1 = "INSERT INTO serie_film (nom, resume, id_bande_annonce, url_vignette, url_vignette_mini, url_affiche) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id";
@@ -157,7 +157,7 @@ async function insertMovie(movieId) {
     }
 }
 
-//insert 20 movies in the database
+//insert 20 movies in the database start DDB
 async function insertLimitMovie() {
     try {
         const query1 = "INSERT INTO serie_film (nom, resume, id_bande_annonce, url_vignette, url_vignette_mini, url_affiche) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id";
@@ -335,7 +335,7 @@ async function insertLimitMovie() {
     }
 }
 
-//insert into serie
+//insert into serie start DDB
 async function insertSerie() {
     try {
         //liste des query
@@ -722,7 +722,7 @@ async function insertSerie() {
     }
 }
 
-//insert categorie with TMDB
+//insert categorie with TMDB start DDB
 async function insertCategorie() {
     try {
         const response = await axios.get(`https://api.themoviedb.org/3/genre/movie/list?api_key=${process.env.API_KEY}&language=fr`);
@@ -744,7 +744,7 @@ async function insertCategorie() {
     return true;
 }
 
-//insert catégories des séries
+//insert catégories des séries start DDB
 async function insertCategorieSerie() {
     try {
         const response = await axios.get(`https://api.themoviedb.org/3/genre/tv/list?api_key=${process.env.API_KEY}&language=fr`);
@@ -771,6 +771,7 @@ async function insertCategorieSerie() {
     return true;
 }
 
+//traduit les données récupérer de TMDB pour qu'elles correspondent à celles en base pour les personnes
 function Trad(departement) {
     let result = "";
     if(departement == "Production") {
@@ -802,6 +803,7 @@ function Trad(departement) {
     return result;
 }
 
+//traduit les données récupérer de TMDB pour qu'elles correspondent à celles en base pour les catégories
 function TradCat(categorie) {
     let catId = "";
     if(categorie == "Adventure") {

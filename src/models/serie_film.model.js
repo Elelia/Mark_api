@@ -199,23 +199,24 @@ async function getAllSeriefilmByCategorie(id) {
     return result.rows;
 }
 
-async function insertAvis(id_compte, id_serie_film, comment, note, date) {
+async function insertAvis(id_compte, id_serie_film, comment, note) {
     dbConn.connect();
   
     const query = `
         insert into
         avis
         (id_compte, id_serie_film, commentaire, note, jour)
-        VALUES ($1, $2, $3, $4, $5)
+        VALUES ($1, $2, $3, $4, NOW())
     `;
   
     let result = false;
     try {
-        await dbConn.query(query, [id_compte, id_serie_film, comment, note, date]);
+        await dbConn.query(query, [id_compte, id_serie_film, comment, note]);
         result = true;
     } catch (err) {
         console.error(err);
     }
+    console.log(result);
     return result;
 }
 
@@ -270,17 +271,18 @@ async function getFilmByCategorieId(id) {
   
     const query = `
         select
-        sf.id_serie_film,
+        sf.id as id_serie_film,
         sf.nom,
         sf.resume,
         sf.age_min,
-        cat.cat_id,
-        cat.cat_nom,
+        cat.id as cat_id,
+        cat.nom as cat_nom,
         f.date_sortie,
         sf.url_vignette,
         sf.url_affiche,
         trailer.url,
-        trailer.id_bande_annonce
+        trailer.id as id_bande_annonce,
+        v.id as id_video
         from
         categorie cat
         inner join
@@ -299,6 +301,10 @@ async function getFilmByCategorieId(id) {
         video trailer
         on
         sf.id_bande_annonce = trailer.id
+        inner join
+        video v
+        on
+        f.id_video = v.id
         where
         cat.id = $1
     `;

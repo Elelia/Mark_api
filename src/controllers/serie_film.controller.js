@@ -2,6 +2,8 @@ const Seriefilm = require('../models/class/serie_film.class');
 const SeriefilmFunction = require('../models/serie_film.model');
 const Session = require('../../session');
 
+//variables globales pour avoir mes tableaux d'objet ?
+
 //fonction qui retourne tous les fimms
 async function allFilm(req, res) {
     const results = await SeriefilmFunction.getAllFilm();
@@ -10,18 +12,17 @@ async function allFilm(req, res) {
         let allSeriefilm = results.map(oneSF => new Seriefilm(oneSF.id_serie_film, oneSF.nom, oneSF.age_min, oneSF.resume, oneSF.id_bande_annonce, oneSF.url_vignette, oneSF.url_affiche, oneSF.date_sortie, oneSF.id_video, oneSF.cat_id, oneSF.cat_nom));
         res.status(200).json(allSeriefilm);
     } else {
-        res.status(500).send('No values');
+        res.status(404).send('No values');
     }
 }
 
 //fonction qui retourne les catégories des films
 async function allCategorieFilm(req, res) {
     const results = await SeriefilmFunction.getAllCategorieFilm();
-    console.log(results);
     if (results.length > 0) {
         res.status(200).json(results);
     } else {
-        res.status(500).send('No values');
+        res.status(404).send('No values');
     }
 }
 
@@ -33,7 +34,7 @@ async function allSerie(req, res) {
         let allSeriefilm = results.map(oneSF => new Seriefilm(oneSF.id_serie_film, oneSF.nom, oneSF.age_min, oneSF.resume, oneSF.id_bande_annonce, oneSF.url_vignette, oneSF.url_affiche, oneSF.date_sortie, oneSF.id_video, oneSF.cat_id, oneSF.cat_nom));
         res.status(200).json(allSeriefilm);
     } else {
-        res.status(500).send('No values');
+        res.status(404).send('No values');
     }
 }
 
@@ -43,7 +44,7 @@ async function allCategorieSerie(req, res) {
     if (results.length > 0) {
         res.status(200).json(results);
     } else {
-        res.status(500).send('No values');
+        res.status(404).send('No values');
     }
 }
 
@@ -81,16 +82,18 @@ async function allSeriefilmByCategorie(req, res) {
 }
 
 //fonction qui retourne les catégories
-async function addAvis(req, res) {
-    console.log(req.body);
+async function addAvis(req, res, next) {
     var id_compte = req.body.userId;
     var id_serie_film = req.body.seriefilmId;
     var comment = req.body.comment;
     var note = req.body.note;
     var date = req.body.date;
+
+    console.log(req.body)
     const result = await SeriefilmFunction.insertAvis(id_compte, id_serie_film, comment, note, date);
     if (result) {
-        res.status(200).json(result);
+        res.status(201).json(result);
+        next();
     } else {
         res.status(500).send('Error while insert avis');
     }
@@ -99,8 +102,8 @@ async function addAvis(req, res) {
 //fonction qui retourne tous les avis
 async function allAvis(req, res) {
     const results = await SeriefilmFunction.getAllAvis(req.params.serie_film_id);
+    console.log(results);
     if (results.length > 0) {
-        //Session.allowCors(handler);
         res.status(200).json(results);
     } else {
         res.status(500).send('No values');
@@ -118,17 +121,15 @@ async function oneUrlVideo(req, res) {
 }
 
 //fonction qui retourne les informations de films de l'id de la catégorie reçu
-async function allSerie(req, res) {
-    const results = await SeriefilmFunction.getFilmByCategorieId(req.body.selectedCategFilm);
+async function filmByCategorieId(req, res) {
+    const results = await SeriefilmFunction.getFilmByCategorieId(req.params.cat_id);
     if (results.length > 0) {
-        // create a new user object
         let allSeriefilm = results.map(oneSF => new Seriefilm(oneSF.id_serie_film, oneSF.nom, oneSF.age_min, oneSF.resume, oneSF.id_bande_annonce, oneSF.url_vignette, oneSF.url_affiche, oneSF.date_sortie, oneSF.id_video, oneSF.cat_id, oneSF.cat_nom));
         res.status(200).json(allSeriefilm);
     } else {
         res.status(500).send('No values');
     }
 }
-
 
 module.exports = {
     allFilm,
@@ -137,5 +138,6 @@ module.exports = {
     allCategorieSerie,
     addAvis,
     allAvis,
-    oneUrlVideo
+    oneUrlVideo,
+    filmByCategorieId
 };

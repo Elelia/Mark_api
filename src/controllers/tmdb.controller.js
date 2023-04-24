@@ -1,6 +1,7 @@
 const TMDBFuction = require('../models/tmdb');
 const fs = require("fs");
 
+//start DDB
 //fonction qui retourne les catégories
 async function insertMultipleMovie(req, res) {
     fs.readFile("movie_ids.json", async (error, data) => {
@@ -67,6 +68,10 @@ async function insertCategorieSerie(req, res) {
         })
     } 
 }
+
+//fin start, début des controllers pour ajout films/séries via admin
+
+
 
 module.exports = {
     insertMultipleMovie,

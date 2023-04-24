@@ -4,6 +4,8 @@ const User = require('../models/class/users.class');
 const UserFunction = require('../models/users.model');
 //pour gérer les tokens
 const Token = require('../../session');
+//envoie du mail de confirmation
+const nodemailer = require("nodemailer");
 
 //fonction qui permet de connecter un utilisateur
 async function loginUser(req, res) {
@@ -91,13 +93,18 @@ async function logoutUser(req, res) {
     });
 }
 
+//retrouver un utilisateur via un mail
 async function userByMail(req, res) {
     const result = await UserFunction.getUserByMail(req.params.mail);
     if (result.length > 0) {
         // create a new user object
         let user = result.map(oneUser => new User(oneUser.id, oneUser.nom, oneUser.prenom, oneUser.mail, oneUser.admin, oneUser.mdp));
+        console.log(user);
         //revoir les codes d'erreur
-        res.status(200).json(user);
+        res.status(200).json({
+            user,
+            message: 'Success'
+        });
     } else {
         res.status(200).json({
             message: 'no user with this mail'
@@ -105,12 +112,51 @@ async function userByMail(req, res) {
     }
 }
 
+//fonction qui sert à l'inscription d'un utilisateur, que ce soit via google ou via le formulaire
+//envoie également un mail pour signaler que l'inscription a réussit
 async function createOneUser(req, res) {
-    await UserFunction.insertUser(req.body.nom, req.body.prenom, req.body.mail, req.body.admin, req.body.mdp);
-    res.status(200).json({
-        success: true,
-        message: 'insert new user into compte'
-    });
+    const result = await UserFunction.insertUser(req.body.nom, req.body.prenom, req.body.mail, req.body.admin, req.body.mdp);
+    if(result) {
+        let transporter = nodemailer.createTransport({
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
+            auth: {
+              user: process.env.ADDRESS_MAIL,
+              pass: process.env.PASSWORD_MAIL,
+            },
+        });
+        /*transporter.verify(function (error, success) {
+            if (error) {
+              console.log(error);
+            } else {
+              console.log("Server is ready to take our messages");
+            }
+        });*/
+        let message = {
+            from: process.env.ADDRESS_MAIL,
+            to: req.body.mail,
+            subject: 'Inscription réussie à Mark',
+            text: "Bonjour ! Votre inscription à notre site web Mark s'est bien déroulée. Vous pouvez dès à présent vous connecter avec vos identifiants afin de regarder vos films et séries préférés !",
+            html: '<p>Contenu du message en format HTML</p>'
+        };
+        transporter.sendMail(message, (err, info) => {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log('E-mail envoyé: ' + info.response);
+            }
+        });
+        res.status(200).json({
+            success: true,
+            message: 'insert new user into compte'
+        });
+    } else {
+        res.status(400).json({
+            success: false,
+            message: 'insert new user failed'
+        });
+    }
 }
 
 module.exports = {

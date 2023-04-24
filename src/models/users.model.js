@@ -37,6 +37,8 @@ async function connectUser(mail, mdp) {
         valid = await bcrypt.compare(mdp, hash);
         if(valid) {
             result = await dbConn.query(query2, [mail, hash]);
+        } else {
+            return false;
         }
     } catch (err) {
         console.error(err);
@@ -117,7 +119,9 @@ async function insertUser(nom, prenom, mail, admin, mdp) {
     const query = `insert into compte (nom, prenom, mail, admin, mdp) values ($1, $2, $3, $4, $5)`;
   
     try {
-        await dbConn.query(query, [nom, prenom, mail, admin, mdp]);
+        //hash le mot de passe saisit par l'utilisateur pour l'enregistrer en base
+        let hash = await bcrypt.hash(mdp, 10);
+        await dbConn.query(query, [nom, prenom, mail, admin, hash]);
     } catch (err) {
         console.error(err);
     }
