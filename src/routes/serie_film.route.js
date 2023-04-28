@@ -1,9 +1,10 @@
 const express = require('express');
+
 const router = express.Router();
 
 const SerieFilm = require('../controllers/serie_film.controller');
 
-//start DDB
+// start DDB
 router.get('/film', SerieFilm.allFilm);
 
 router.get('/film/categories', SerieFilm.allCategorieFilm);
@@ -20,6 +21,6 @@ router.get('/video/url/:id_video', SerieFilm.oneUrlVideo);
 
 router.get('/film/id_categorie/:cat_id', SerieFilm.filmByCategorieId);
 
-//fin start, début des routes pour ajout films/séries
+// fin start, début des routes pour ajout films/séries
 
 module.exports = router;

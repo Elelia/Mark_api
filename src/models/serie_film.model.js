@@ -1,8 +1,7 @@
 const dbConn = require('../../dbconfig');
 
 async function getAllFilm() {
-  
-    const query = `
+  const query = `
         select 
         cat.id as cat_id,
         cat.nom as cat_nom,
@@ -32,84 +31,82 @@ async function getAllFilm() {
         cat.id
     `;
 
-    try {
-        const client = await dbConn.connect();
-        //console.log('connected');
+  try {
+    const client = await dbConn.connect();
+    // console.log('connected');
 
-        const res = await client.query(query);
-        //console.log('Query result:', res.rows);
+    const res = await client.query(query);
+    // console.log('Query result:', res.rows);
 
-        client.release();
-        //console.log('disconnected');
-        return res.rows;
-    } catch (err) {
-        console.error(err);
-    }
+    client.release();
+    // console.log('disconnected');
+    return res.rows;
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 async function getAllCategorieFilm() {
-  
-    const query = `
-        select cat.*
-        from
-        categorie cat
-        inner join
-        categorie_serie_film csf
-        on
-        cat.id = csf.id_categorie
-        inner join
-		serie_film sf
-		on
-		csf.id_serie_film = sf.id
-		inner join
-		film
-		on
-		sf.id = film.id_serie_film
-        group by
-        cat.id
-        order by
-        cat.id
-    `;
-  
-    let result;
-    try {
-        //on ouvre la connexion
-        const client = await dbConn.connect();
+  const query = `
+    select
+    cat.*
+    from
+    categorie cat
+    inner join
+    categorie_serie_film csf
+    on
+    cat.id = csf.id_categorie
+    inner join
+    serie_film sf
+    on
+    csf.id_serie_film = sf.id
+    inner join
+    film
+    on
+    sf.id = film.id_serie_film
+    group by
+    cat.id
+    order by
+    cat.id
+  `;
 
-        //on exécute la requête
-        const res = await client.query(query);
+  let result;
+  try {
+    // on ouvre la connexion
+    const client = await dbConn.connect();
 
-        //on ferme la connexion
-        client.release();
-        return res.rows;
-    } catch (err) {
-        console.error(err);
-    }
+    // on exécute la requête
+    const res = await client.query(query);
+
+    // on ferme la connexion
+    client.release();
+    return res.rows;
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 async function getIdCategorie() {
-  
-    const query = `SELECT id  FROM categorie`;
-  
-    let result;
-    try {
-        //on ouvre la connexion
-        const client = await dbConn.connect();
+  const query = 'SELECT id  FROM categorie';
 
-        //on exécute la requête
-        const res = await client.query(query);
+  let result;
+  try {
+    // on ouvre la connexion
+    const client = await dbConn.connect();
 
-        //on ferme la connexion
-        client.release();
-        return res.rows;
-    } catch (err) {
-        console.error(err);
-    }
+    // on exécute la requête
+    const res = await client.query(query);
+
+    // on ferme la connexion
+    client.release();
+    return res.rows;
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 async function getAllSerie() {
-  
-    const query = `
+  const query = `
         select 
         cat.id as cat_id,
         cat.nom as cat_nom,
@@ -133,26 +130,25 @@ async function getAllSerie() {
         order by
         cat.id
     `;
-  
-    let result;
-    try {
-        //on ouvre la connexion
-        const client = await dbConn.connect();
 
-        //on exécute la requête
-        const res = await client.query(query);
+  let result;
+  try {
+    // on ouvre la connexion
+    const client = await dbConn.connect();
 
-        //on ferme la connexion
-        client.release();
-        return res.rows;
-    } catch (err) {
-        console.error(err);
-    }
+    // on exécute la requête
+    const res = await client.query(query);
+
+    // on ferme la connexion
+    client.release();
+    return res.rows;
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 async function getAllCategorieSerie() {
-  
-    const query = `
+  const query = `
         select cat.*
         from
         categorie cat
@@ -171,28 +167,28 @@ async function getAllCategorieSerie() {
         order by
         cat.id
     `;
-  
-    let result;
-    try {
-        //on ouvre la connexion
-        const client = await dbConn.connect();
 
-        //on exécute la requête
-        const res = await client.query(query);
+  let result;
+  try {
+    // on ouvre la connexion
+    const client = await dbConn.connect();
 
-        //on ferme la connexion
-        client.release();
-        return res.rows;
-    } catch (err) {
-        console.error(err);
-    }
+    // on exécute la requête
+    const res = await client.query(query);
+
+    // on ferme la connexion
+    client.release();
+    return res.rows;
+  } catch (err) {
+    console.error(err);
+  }
 }
 
-//pas utilisée pour l'instant
+// pas utilisée pour l'instant
 async function getAllSeriefilmByCategorie(id) {
-    dbConn.connect();
-  
-    const query = `
+  dbConn.connect();
+
+  const query = `
         select 
         cat.id as cat_id,
         cat.nom as cat_nom,
@@ -213,50 +209,50 @@ async function getAllSeriefilmByCategorie(id) {
         order by
         cat.id
     `;
-  
-    let result;
-    try {
-        result = await dbConn.query(query, [id]);
-    } catch (err) {
-        console.error(err);
-    }
-    //console.log(result.rows);
-    return result.rows;
+
+  let result;
+  try {
+    result = await dbConn.query(query, [id]);
+  } catch (err) {
+    console.error(err);
+  }
+  // console.log(result.rows);
+  return result.rows;
 }
 
 async function insertAvis(id_compte, id_serie_film, comment, note) {
-    dbConn.connect();
-  
-    const query = `
+  dbConn.connect();
+
+  const query = `
         insert into
         avis
         (id_compte, id_serie_film, commentaire, note, jour)
         VALUES ($1, $2, $3, $4, NOW())
     `;
-  
-    let result = false;
-    try {
-        //on ouvre la connexion
-        const client = await dbConn.connect();
 
-        //on exécute la requête
-        await client.query(query, [id_compte, id_serie_film, comment, note]);
+  let result = false;
+  try {
+    // on ouvre la connexion
+    const client = await dbConn.connect();
 
-        //on ferme la connexion
-        client.release();
-        result = true;
-        // await dbConn.query(query, [id_compte, id_serie_film, comment, note]);
-        // result = true;
-    } catch (err) {
-        console.error(err);
-    }
-    return result;
+    // on exécute la requête
+    await client.query(query, [id_compte, id_serie_film, comment, note]);
+
+    // on ferme la connexion
+    client.release();
+    result = true;
+    // await dbConn.query(query, [id_compte, id_serie_film, comment, note]);
+    // result = true;
+  } catch (err) {
+    console.error(err);
+  }
+  return result;
 }
 
 async function getAllAvis(id) {
-    dbConn.connect();
-  
-    const query = `
+  dbConn.connect();
+
+  const query = `
         select
         avis.*
         from
@@ -268,28 +264,28 @@ async function getAllAvis(id) {
         where
         sf.id = $1
     `;
-  
-    let result;
-    try {
-        //on ouvre la connexion
-        const client = await dbConn.connect();
 
-        //on exécute la requête
-        const res = await client.query(query, [id]);
+  let result;
+  try {
+    // on ouvre la connexion
+    const client = await dbConn.connect();
 
-        //on ferme la connexion
-        client.release();
-        return res.rows;
-    } catch (err) {
-        console.error(err);
-    }
-    //return result.rows;
+    // on exécute la requête
+    const res = await client.query(query, [id]);
+
+    // on ferme la connexion
+    client.release();
+    return res.rows;
+  } catch (err) {
+    console.error(err);
+  }
+  // return result.rows;
 }
 
 async function getUrlVideo(id) {
-    dbConn.connect();
+  dbConn.connect();
 
-    const query = `
+  const query = `
         select 
         url
         from 
@@ -298,27 +294,27 @@ async function getUrlVideo(id) {
         id = $1
     `;
 
-    try {
-        //on ouvre la connexion
-        const client = await dbConn.connect();
+  try {
+    // on ouvre la connexion
+    const client = await dbConn.connect();
 
-        //on exécute la requête
-        const res = await client.query(query, [id]);
+    // on exécute la requête
+    const res = await client.query(query, [id]);
 
-        //on ferme la connexion
-        client.release();
-        return res.rows;
-    } catch(err) {
-        console.error(err);
-    }
-    //return result.rows;
+    // on ferme la connexion
+    client.release();
+    return res.rows;
+  } catch (err) {
+    console.error(err);
+  }
+  // return result.rows;
 }
 
-//pas utilisée pour l'instant
+// pas utilisée pour l'instant
 async function getFilmByCategorieId(id) {
-    dbConn.connect();
-  
-    const query = `
+  dbConn.connect();
+
+  const query = `
         select
         sf.id as id_serie_film,
         sf.nom,
@@ -357,22 +353,22 @@ async function getFilmByCategorieId(id) {
         where
         cat.id = $1
     `;
-  
-    let result;
-    try {
-        //on ouvre la connexion
-        const client = await dbConn.connect();
 
-        //on exécute la requête
-        const res = await client.query(query, [id]);
+  let result;
+  try {
+    // on ouvre la connexion
+    const client = await dbConn.connect();
 
-        //on ferme la connexion
-        client.release();
-        return res.rows;
-    } catch (err) {
-        console.error(err);
-    }
-    //return result.rows;
+    // on exécute la requête
+    const res = await client.query(query, [id]);
+
+    // on ferme la connexion
+    client.release();
+    return res.rows;
+  } catch (err) {
+    console.error(err);
+  }
+  // return result.rows;
 }
 
 module.exports = {
@@ -384,5 +380,5 @@ module.exports = {
   getUrlVideo,
   getAllCategorieSerie,
   getAllSerie,
-  getFilmByCategorieId
+  getFilmByCategorieId,
 };
