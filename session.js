@@ -59,8 +59,8 @@ function refreshToken(req, res, next) {
     // Envoie le nouveau token au client dans un cookie sécurisé
     res.cookie('token', newToken, {
       httpOnly: true,
-      //secure: true,
-      sameSite: 'strict',
+      secure: true,
+      sameSite: 'none',
       maxAge: 24 * 60 * 60 * 1000 // Durée de validité du cookie (ici 24 heures)
     });
 
@@ -72,8 +72,8 @@ function setTokenCookie(res, token) {
   // Configuration du cookie avec le token JWT
   res.cookie('token', token, {
     httpOnly: true, // Empêcher l'accès au cookie depuis le code JavaScript côté client
-    Secure: false, // Utiliser uniquement pour les connexions HTTPS
-    sameSite: 'strict',
+    Secure: true, // Utiliser uniquement pour les connexions HTTPS
+    sameSite: 'none',
     maxAge: 3600000 // Temps d'expiration du cookie en millisecondes (1 heure)
   });
 }
