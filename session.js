@@ -73,7 +73,7 @@ function setTokenCookie(res, token) {
   res.cookie('token', token, {
     httpOnly: true, // Empêcher l'accès au cookie depuis le code JavaScript côté client
     Secure: true, // Utiliser uniquement pour les connexions HTTPS
-    sameSite: 'none',
+    sameSite: 'strict',
     maxAge: 3600000 // Temps d'expiration du cookie en millisecondes (1 heure)
   });
 }

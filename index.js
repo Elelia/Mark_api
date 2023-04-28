@@ -34,7 +34,7 @@ app.use(function(req, res, next) {
   next();
 });
 
-//middleware
+
 app.use(express.json());
 app.use(cookieParser());
 
