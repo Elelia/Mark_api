@@ -149,24 +149,24 @@ async function getAllSerie() {
 
 async function getAllCategorieSerie() {
   const query = `
-        select cat.*
-        from
-        categorie cat
-        inner join
-        categorie_serie_film csf
-        on
-        cat.id = csf.id_categorie
-        inner join
+    select cat.*
+    from
+    categorie cat
+    inner join
+    categorie_serie_film csf
+    on
+    cat.id = csf.id_categorie
+    inner join
 		serie_film sf
 		on
 		csf.id_serie_film = sf.id
 		where
 		sf.id not in (select id_serie_film from film)
-        group by
-        cat.id
-        order by
-        cat.id
-    `;
+    group by
+    cat.id
+    order by
+    cat.id
+  `;
 
   let result;
   try {

@@ -151,7 +151,7 @@ async function insertUser(nom, prenom, mail, admin, mdp) {
   //return true;
 }
 
-//valider les préférences de l'utilisateur pour les catégories
+//insert les préférences de l'utilisateur pour les catégories
 async function insertPreferenceCategorie(id_compte, id_categorie) {
   const query = 'INSERT into preference_categorie (id_compte, id_categorie) values ($1, $2)';
 
@@ -172,6 +172,57 @@ async function insertPreferenceCategorie(id_compte, id_categorie) {
   return result;
 }
 
+//vinsert les préférences de l'utilisateur pour les acteurs/réalisateurs
+async function insertPreferencePersonne(id_compte, id_personne) {
+  const query = 'INSERT into preference_personne (id_compte, id_personne) values ($1, $2)';
+
+  let result = false;
+  try {
+    // on ouvre la connexion
+    const client = await dbConn.connect();
+
+    // on exécute la requête
+    await client.query(query, [id_compte, id_personne]);
+
+    // on ferme la connexion
+    client.release();
+    result = true;
+  } catch (err) {
+    console.error(err);
+  }
+  return result;
+}
+
+async function getActeurs() {
+  const query = `
+    select
+    p.nom,
+    p.prenom
+    from
+    personne p
+    inner join
+    personne_serie_film psf
+    on
+    p.id = psf.id_personne
+    where
+    psf.status = 'acteur'
+  `;
+
+  try {
+    // on ouvre la connexion
+    const client = await dbConn.connect();
+
+    // on exécute la requête
+    res = await client.query(query);
+
+    // on ferme la connexion
+    client.release();
+    return res.rows;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 module.exports = {
   connectUser,
   getAllUsers,
@@ -180,5 +231,7 @@ module.exports = {
   checkPassword,
   getUserByMail,
   insertUser,
-  insertPreferenceCategorie
+  insertPreferenceCategorie,
+  insertPreferencePersonne,
+  getActeurs
 };
