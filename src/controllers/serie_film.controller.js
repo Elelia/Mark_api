@@ -1,6 +1,6 @@
 const Seriefilm = require('../models/class/serie_film.class');
 const SeriefilmFunction = require('../models/serie_film.model');
-const Session = require('../../session');
+const Session = require('../session');
 
 // variables globales pour avoir mes tableaux d'objet ?
 

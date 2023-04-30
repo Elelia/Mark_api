@@ -4,7 +4,7 @@ const User = require('../models/class/users.class');
 // les fonctions liées à user
 const UserFunction = require('../models/users.model');
 // pour gérer les tokens
-const Token = require('../../session');
+const Token = require('../session');
 // envoie du mail de confirmation
 
 // fonction qui permet de connecter un utilisateur
@@ -50,6 +50,7 @@ async function allUsers(req, res) {
   }
 }
 
+//permet de modifier certaines informations de l'utilisateur
 async function modifyUser(req, res) {
   const id = req.body.userId;
   const mdp = req.body.verifpassword;
@@ -76,6 +77,7 @@ async function modifyUser(req, res) {
 
 // fonction qui retourne un objet user en fonction de son id
 async function userById(req, res) {
+  console.log(req.user.id);
   const result = await UserFunction.getUserById(req.user.id);
 
   if (!result.length) {
@@ -117,7 +119,7 @@ async function userByMail(req, res) {
       message: 'Success',
     });
   } else {
-    res.status(200).json({
+    res.status(400).json({
       message: 'no user with this mail',
     });
   }
@@ -170,6 +172,22 @@ async function createOneUser(req, res) {
   }
 }
 
+//fonction pour insérer valeur dans preference_categorie
+async function createPreferenceCategorie(req, res) {
+  const result = await UserFunction.insertPreferenceCategorie(req.body.id_compte, req.body.id_categorie);
+  if(!result) {
+    res.status(400).json({
+      success: false,
+      message: 'insert preference categorie failed',
+    });
+  }
+
+  res.status(200).json({
+    success: true,
+    message: 'insert preference categorie success',
+  });
+}
+
 module.exports = {
   loginUser,
   allUsers,
@@ -177,4 +195,5 @@ module.exports = {
   logoutUser,
   userByMail,
   createOneUser,
+  createPreferenceCategorie
 };

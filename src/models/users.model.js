@@ -134,18 +134,42 @@ async function getUserByMail(mail) {
 
 // insert user
 async function insertUser(nom, prenom, mail, admin, mdp) {
-  dbConn.connect();
 
   const query = 'insert into compte (nom, prenom, mail, admin, mdp) values ($1, $2, $3, $4, $5)';
 
   try {
+    const client = await dbConn.connect();
+
     // hash le mot de passe saisit par l'utilisateur pour l'enregistrer en base
     const hash = await bcrypt.hash(mdp, 10);
-    await dbConn.query(query, [nom, prenom, mail, admin, hash]);
+    await client.query(query, [nom, prenom, mail, admin, hash]);
+    client.release();
+    return true;
   } catch (err) {
     console.error(err);
   }
-  return true;
+  //return true;
+}
+
+//valider les préférences de l'utilisateur pour les catégories
+async function insertPreferenceCategorie(id_compte, id_categorie) {
+  const query = 'INSERT into preference_categorie (id_compte, id_categorie) values ($1, $2)';
+
+  let result = false;
+  try {
+    // on ouvre la connexion
+    const client = await dbConn.connect();
+
+    // on exécute la requête
+    await client.query(query, [id_compte, id_categorie]);
+
+    // on ferme la connexion
+    client.release();
+    result = true;
+  } catch (err) {
+    console.error(err);
+  }
+  return result;
 }
 
 module.exports = {
@@ -156,4 +180,5 @@ module.exports = {
   checkPassword,
   getUserByMail,
   insertUser,
+  insertPreferenceCategorie
 };
