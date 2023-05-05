@@ -119,16 +119,19 @@ async function checkPassword(id, mdp) {
 
 // get user by mail
 async function getUserByMail(mail) {
-  dbConn.connect();
 
   const query = 'SELECT * FROM compte where mail = $1';
 
   let result;
   try {
-    result = await dbConn.query(query, [mail]);
+    const client = await dbConn.connect();
+
+    result = await client.query(query, [mail]);
+    client.release();
   } catch (err) {
     console.error(err);
   }
+
   return result.rows;
 }
 
