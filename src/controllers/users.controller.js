@@ -119,7 +119,7 @@ async function userByMail(req, res) {
       message: 'Success',
     });
   } else {
-    res.status(400).json({
+    res.status(200).json({
       message: 'no user with this mail',
     });
   }
