@@ -22,5 +22,8 @@ router.get('/video/url/:id_video', SerieFilm.oneUrlVideo);
 router.get('/film/id_categorie/:cat_id', SerieFilm.filmByCategorieId);
 
 // fin start, début des routes pour ajout films/séries
+router.get('/film/get_tmdb/:id', SerieFilm.getMoviesCatTMDB);
+
+router.post('/film/insertMovie', SerieFilm.insertMovieSelected);
 
 module.exports = router;

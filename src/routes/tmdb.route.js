@@ -5,14 +5,14 @@ const router = express.Router();
 
 const Tmdb = require('../controllers/tmdb.controller');
 
-router.put('/movies', Tmdb.insertMultipleMovie);
+//router.post('/movies', Tmdb.insertMultipleMovie);
 
-// router.put('/categories', Tmdb.insertAllCategorie);
+// router.post('/categories', Tmdb.insertAllCategorie);
 
-router.put('/discover', Tmdb.insertSomeMovie);
+//router.post('/discover', Tmdb.insertSomeMovie);
 
-router.put('/serie', Tmdb.insertSomeSerie);
+//router.post('/serie', Tmdb.insertSomeSerie);
 
-router.put('/seriecat', Tmdb.insertCategorieSerie);
+//router.post('/seriecat', Tmdb.insertCategorieSerie);
 
 module.exports = router;

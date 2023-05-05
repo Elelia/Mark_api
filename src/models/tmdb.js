@@ -1,5 +1,6 @@
 const axios = require('axios');
 const dbConn = require('../../dbconfig');
+const utils = require('../utils/function');
 
 // insert movie in serie_film, film and categorie_serie_film with TMDB start DDB
 async function insertMovie(movieId) {
@@ -63,7 +64,7 @@ async function insertMovie(movieId) {
     for (var i = 0; i < 10; i++) {
       const { name } = resultsCast[i];
       const department = resultsCast[i].known_for_department;
-      const role = Trad(department);
+      const role = utils.Trad(department);
       const split = name.indexOf(' ');
       const prenom = name.substring(0, split);
       const nom = name.substring(split + 1);
@@ -98,7 +99,7 @@ async function insertMovie(movieId) {
       if (resultsCrew[i].job == 'Director') {
         role = 'realisateur';
       } else {
-        role = Trad(department);
+        role = utils.Trad(department);
       }
       const split = name.indexOf(' ');
       const prenom = name.substring(0, split);
@@ -135,7 +136,7 @@ async function insertMovie(movieId) {
         [categorie],
       );
       if (!id_categorie.rows[0]) {
-        catId = TradCat(categorie);
+        catId = utils.TradCat(categorie);
       } else {
         catId = id_categorie.rows[0].id;
       }
@@ -230,7 +231,7 @@ async function insertLimitMovie() {
         for (var i = 0; i < 10; i++) {
           const { name } = resultsCast[i];
           const department = resultsCast[i].known_for_department;
-          const role = Trad(department);
+          const role = utils.Trad(department);
           const split = name.indexOf(' ');
           const prenom = name.substring(0, split);
           const nom = name.substring(split + 1);
@@ -265,7 +266,7 @@ async function insertLimitMovie() {
           if (resultsCrew[i].job == 'Director') {
             role = 'realisateur';
           } else {
-            role = Trad(department);
+            role = utils.Trad(department);
           }
           const split = name.indexOf(' ');
           const prenom = name.substring(0, split);
@@ -306,7 +307,7 @@ async function insertLimitMovie() {
                 [list.name],
               );
               if (!id_categorie.rows[0]) {
-                catId = TradCat(categorie);
+                catId = utils.TradCat(categorie);
               } else {
                 catId = id_categorie.rows[0].id;
               }
@@ -396,7 +397,7 @@ async function insertSerie() {
                     if(resultsCast[i]) {
                         const name = resultsCast[i].name;
                         const department = resultsCast[i].known_for_department;
-                        let role = Trad(department);
+                        let role = utils.Trad(department);
                         const split = name.indexOf(" ");
                         let prenom = name.substring(0, split);
                         let nom = name.substring(split + 1);
@@ -433,7 +434,7 @@ async function insertSerie() {
                         if(resultsCrew[i].job == "Director") {
                             role = "realisateur";
                         } else {
-                            role = Trad(department);
+                            role = utils.Trad(department);
                         }
                         const split = name.indexOf(" ");
                         let prenom = name.substring(0, split);
@@ -475,7 +476,7 @@ async function insertSerie() {
                                 [list.name]
                             );
                             if(!id_categorie.rows[0]) {
-                                catId = TradCat(categorie);
+                                catId = utils.TradCat(categorie);
                             } else {
                                 catId = id_categorie.rows[0].id;
                             }
@@ -579,7 +580,7 @@ async function insertSerie() {
           if (resultsCast[i]) {
             const { name } = resultsCast[i];
             const department = resultsCast[i].known_for_department;
-            const role = Trad(department);
+            const role = utils.Trad(department);
             const split = name.indexOf(' ');
             const prenom = name.substring(0, split);
             const nom = name.substring(split + 1);
@@ -616,7 +617,7 @@ async function insertSerie() {
             if (resultsCrew[i].job == 'Director') {
               role = 'realisateur';
             } else {
-              role = Trad(department);
+              role = utils.Trad(department);
             }
             const split = name.indexOf(' ');
             const prenom = name.substring(0, split);
@@ -658,7 +659,7 @@ async function insertSerie() {
                 [list.name],
               );
               if (!id_categorie.rows[0]) {
-                catId = TradCat(categorie);
+                catId = utils.TradCat(categorie);
               } else {
                 catId = id_categorie.rows[0].id;
               }
@@ -768,66 +769,6 @@ async function insertCategorieSerie() {
     console.error(`Error inserting data for categorie: ${error}`);
   }
   return true;
-}
-
-// traduit les données récupérer de TMDB pour qu'elles correspondent à celles en base pour les personnes
-function Trad(departement) {
-  let result = '';
-  if (departement == 'Production') {
-    result = 'producteur';
-  } else if (departement == 'Acting') {
-    result = 'acteur';
-  } else if (departement == 'Visual Effects') {
-    result = 'visuel';
-  } else if (departement == 'Costume & Make-Up') {
-    result = 'costume';
-  } else if (departement == 'Art') {
-    result = 'art';
-  } else if (departement == 'Sound') {
-    result = 'son';
-  } else if (departement == 'Directing') {
-    result = 'directeur';
-  } else if (departement == 'Writing') {
-    result = 'scenario';
-  } else if (departement == 'Camera') {
-    result = 'camera';
-  } else if (departement == 'Editing') {
-    result = 'edition';
-  } else if (departement == 'Crew') {
-    result = 'membre';
-  } else if (departement == 'Lighting') {
-    result = 'lumiere';
-  }
-
-  return result;
-}
-
-// traduit les données récupérer de TMDB pour qu'elles correspondent à celles en base pour les catégories
-function TradCat(categorie) {
-  let catId = '';
-  if (categorie == 'Adventure') {
-    catId = 2;
-  } else if (categorie == 'Fantasy') {
-    catId = 9;
-  } else if (categorie == 'Drama') {
-    catId = 7;
-  } else if (categorie == 'Documentary') {
-    catId = 6;
-  } else if (categorie == 'Family') {
-    catId = 8;
-  } else if (categorie == 'History') {
-    catId = 10;
-  } else if (categorie == 'War') {
-    catId = 18;
-  } else if (categorie == 'Science Fiction') {
-    catId = 15;
-  } else if (categorie == 'Horror') {
-    catId = 11;
-  } else if (categorie == 'Comedy') {
-    catId = 4;
-  }
-
-  return catId;
 }
 
 module.exports = {

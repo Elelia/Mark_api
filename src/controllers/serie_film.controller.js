@@ -1,6 +1,8 @@
 const Seriefilm = require('../models/class/serie_film.class');
 const SeriefilmFunction = require('../models/serie_film.model');
 const Session = require('../session');
+const fs = require('fs');
+const TMDBFunction = require('../models/tmdb');
 
 // variables globales pour avoir mes tableaux d'objet ?
 
@@ -128,6 +130,45 @@ async function filmByCategorieId(req, res) {
   }
 }
 
+//fonction qui retourne les films du fichier json mais en fait c'est compliqué
+async function getMoviesTMDB(req, res) {
+  const results = [];
+  fs.readFile('movie_ids_04_01_2023.json', async (error, data) => {
+    if (error) {
+      console.error(`Error reading file: ${error}`);
+      return;
+    }
+    const movies = JSON.parse(data);
+    const movieIds = movies.map((movie) => movie.id);
+
+    for (const movieId of movieIds) {
+      const res = await SeriefilmFunction.getMovieTMDB(movieId, req.body.id);
+      console.log(res);
+      results.push(res);
+    }
+  });
+  //console.log(results);
+  res.status(200).json(results);
+}
+
+//retrouve 20 films de TMDB en fonction de l'id catégorie envoyé
+async function getMoviesCatTMDB(req, res) {
+  console.log(req.params.id);
+  const results = await SeriefilmFunction.getMovieCatTMDB(req.params.id);
+  if(!results) {
+    res.status(500).send('No values');
+  }
+  res.status(200).json(results);
+}
+
+async function insertMovieSelected(req, res) {
+  await TMDBFunction.insertMovie(req.body.id_movie);
+  res.status(200).json({
+    success: true,
+    message: 'Insert movie selected successful',
+  });
+}
+
 module.exports = {
   allFilm,
   allCategorieFilm,
@@ -137,4 +178,7 @@ module.exports = {
   allAvis,
   oneUrlVideo,
   filmByCategorieId,
+  getMoviesTMDB,
+  getMoviesCatTMDB,
+  insertMovieSelected
 };
