@@ -147,13 +147,11 @@ async function getMoviesTMDB(req, res) {
       results.push(res);
     }
   });
-  //console.log(results);
   res.status(200).json(results);
 }
 
 //retrouve 20 films de TMDB en fonction de l'id catégorie envoyé
 async function getMoviesCatTMDB(req, res) {
-  console.log(req.params.id);
   const results = await SeriefilmFunction.getMovieCatTMDB(req.params.id);
   if(!results) {
     res.status(500).send('No values');
@@ -161,12 +159,41 @@ async function getMoviesCatTMDB(req, res) {
   res.status(200).json(results);
 }
 
+//ajoute en base les films sélectionnés via l'admin
 async function insertMovieSelected(req, res) {
   await TMDBFunction.insertMovie(req.body.id_movie);
   res.status(200).json({
     success: true,
     message: 'Insert movie selected successful',
   });
+}
+
+//retrouve 20 séries de TMDB en fonction de l'id catégorie envoyé
+async function getSeriesCatTMDB(req, res) {
+  const results = await SeriefilmFunction.getSerieCatTMDB(req.params.id);
+  if(!results) {
+    res.status(500).send('No values');
+  }
+  res.status(200).json(results);
+}
+
+//ajoute en base les séries sélectionné via l'admin
+async function insertSerieSelected(req, res) {
+  await SeriefilmFunction.insertSerie(req.body.id_serie);
+  res.status(200).json({
+    success: true,
+    message: 'Insert serie selected successful',
+  });
+}
+
+async function filmByPreference(req, res) {
+  const results = await SeriefilmFunction.getMovieByPref(req.user.id);
+  if (results) {
+    const allSeriefilm = results.map((oneSF) => new Seriefilm(oneSF.id_serie_film, oneSF.nom, oneSF.age_min, oneSF.resume, oneSF.id_bande_annonce, oneSF.url_vignette, oneSF.url_affiche, oneSF.date_sortie, oneSF.id_video, oneSF.cat_id, oneSF.cat_nom));
+    res.status(200).json(allSeriefilm);
+  } else {
+    res.status(500).send('No values');
+  }
 }
 
 module.exports = {
@@ -178,7 +205,9 @@ module.exports = {
   allAvis,
   oneUrlVideo,
   filmByCategorieId,
-  getMoviesTMDB,
   getMoviesCatTMDB,
-  insertMovieSelected
+  insertMovieSelected,
+  getSeriesCatTMDB,
+  insertSerieSelected,
+  filmByPreference
 };

@@ -53,6 +53,8 @@ function Trad(departement) {
       catId = 11;
     } else if (categorie == 'Comedy') {
       catId = 4;
+    } else if (categorie == 'Sci-Fi & Fantasy') {
+      catId = 24;
     }
   
     return catId;

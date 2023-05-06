@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 const SerieFilm = require('../controllers/serie_film.controller');
+const session = require('../session');
 
 // start DDB
 router.get('/film', SerieFilm.allFilm);
@@ -21,9 +22,16 @@ router.get('/video/url/:id_video', SerieFilm.oneUrlVideo);
 
 router.get('/film/id_categorie/:cat_id', SerieFilm.filmByCategorieId);
 
+//route qui permet de retourner des films en fonction des préférences catégories de l'utilisateur
+router.get('/film/bypref', session.authenticateToken, SerieFilm.filmByPreference);
+
 // fin start, début des routes pour ajout films/séries
 router.get('/film/get_tmdb/:id', SerieFilm.getMoviesCatTMDB);
 
 router.post('/film/insertMovie', SerieFilm.insertMovieSelected);
+
+router.get('/serie/get_tmdb/:id', SerieFilm.getSeriesCatTMDB);
+
+router.post('/serie/insertSerie', SerieFilm.insertSerieSelected);
 
 module.exports = router;

@@ -136,7 +136,7 @@ async function insertMovie(movieId) {
         [categorie],
       );
       if (!id_categorie.rows[0]) {
-        catId = utils.TradCat(categorie);
+        catId = utils.TradCatFirst(categorie);
       } else {
         catId = id_categorie.rows[0].id;
       }
@@ -175,12 +175,12 @@ async function insertLimitMovie() {
     const response = await axios.get(`https://api.themoviedb.org/3/discover/movie/?api_key=${process.env.API_KEY}&language=fr&include_adult=false&release_date.gte=2023-01-01&release_date.lte=2023-04-01`);
     const movieList = response.data.results;
 
-    for (const movie of movieList) {
+    for(const movie of movieList) {
       const resp = await dbConn.query(
         query9,
         [movie.title],
       );
-      if (!resp.rows[0]) {
+      if(!resp.rows[0]) {
         const movieId = movie.id;
 
         // retrive info of the film for runtime
@@ -324,8 +324,6 @@ async function insertLimitMovie() {
           query2,
           [movie.release_date, idVideo, idFilm],
         );
-      } else {
-        console.log('bah non');
       }
     }
 
@@ -730,7 +728,6 @@ async function insertCategorie() {
     const categorieData = results.map((categorie) => categorie.name);
 
     for (const categorie of categorieData) {
-      console.log(categorie);
       await dbConn.query(
         'INSERT INTO categorie (nom) VALUES ($1)',
         [categorie],
