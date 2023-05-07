@@ -26,4 +26,6 @@ router.post('/create', Users.createOneUser);
 
 router.post('/prefcat', Users.createPreferenceCategorie);
 
+router.put('/updateUser', session.authenticateToken, Users.modifyUser);
+
 module.exports = router;

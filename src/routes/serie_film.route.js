@@ -34,4 +34,6 @@ router.get('/serie/get_tmdb/:id', SerieFilm.getSeriesCatTMDB);
 
 router.post('/serie/insertSerie', SerieFilm.insertSerieSelected);
 
+router.post('/film/saw', session.authenticateToken, SerieFilm.videoSaw);
+
 module.exports = router;

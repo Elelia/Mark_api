@@ -186,7 +186,6 @@ async function getAllCategorieSerie() {
 }
 
 async function insertAvis(id_compte, id_serie_film, comment, note) {
-  dbConn.connect();
 
   const query = `
         insert into
@@ -215,17 +214,21 @@ async function insertAvis(id_compte, id_serie_film, comment, note) {
 }
 
 async function getAllAvis(id) {
-  dbConn.connect();
 
   const query = `
     select
-    avis.*
+    avis.*,
+    c.prenom
     from
     avis
     inner join
     serie_film sf
     on
     sf.id = avis.id_serie_film
+    inner join
+	  compte c
+	  on
+	  avis.id_compte = c.id
     where
     sf.id = $1
   `;
@@ -248,7 +251,6 @@ async function getAllAvis(id) {
 }
 
 async function getUrlVideo(id) {
-  dbConn.connect();
 
   const query = `
     select 
@@ -339,6 +341,7 @@ async function getFilmByCategorieId(id) {
 //beaucoup de données à charger alors la fonction n'est pas utilisée
 async function getMovieTMDB(movieId, name_categorie) {
   try {
+    const client = await dbConn.connect();
     const results = [];
     const query = 'select * from categorie where id = $1';
 
@@ -426,7 +429,65 @@ async function getMovieCatTMDB(id_categorie) {
   }
 }
 
-//retrouve 20 films de TMDB en fonction de l'id catégorie envoyé
+//retrouve 20 films de TMDB en fonction de du titre envoyé
+async function getMovieTitleTMDB(title) {
+  try {
+    const client = await dbConn.connect();
+    const results = [];
+    let page = Math.floor(Math.random() * 501);
+    let id_cat = '';
+    const query = 'select * from categorie where id = $1';
+    const query2 = 'select nom from serie_film where nom = $1';
+
+    const catResponse = await axios.get(`https://api.themoviedb.org/3/genre/movie/list?api_key=${process.env.API_KEY}&language=fr`);
+    const listCategories = catResponse.data.genres;
+
+    const res = await client.query(query,[id_categorie]);
+
+    //récupère l'id catégorie de tmdb en fonction de l'id de la catégorie en base
+    for(var i = 0; listCategories.length > i; i++) {
+      //console.log(listCategories[i].id);
+      if(listCategories[i].name ==  res.rows[0].nom) {
+        id_cat = listCategories[i].id;
+      }
+    }
+
+    // Retrieve movie data from TMDB
+    let getResp = false;
+    let response = null;
+    while(!getResp) {
+      response = await axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=${process.env.API_KEY}&language=fr&include_adult=false&with_genres=${id_cat}&page=${page}`);
+      if(response.data.results.length !== 0) {
+        getResp = true;
+      } else {
+        page = Math.floor(Math.random() * 501);
+      }
+    }
+
+    const movieList = response.data.results;
+
+    for (const movie of movieList) {
+      const resp = await client.query(query2,[movie.title]);
+      if(!resp.rows[0]) {
+        const data = {
+          id: movie.id,
+          title: movie.title,
+          categorie: res.rows[0].nom,
+          overview:  movie.overview,
+          release_date: movie.release_date
+        };
+        results.push(data);
+      }
+    }
+    client.release();
+
+    return results;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+//retrouve 20 séries de TMDB en fonction de l'id catégorie envoyé
 async function getSerieCatTMDB(id_categorie) {
   try {
     const client = await dbConn.connect();
@@ -454,9 +515,7 @@ async function getSerieCatTMDB(id_categorie) {
     let getResp = false;
     let response = null;
     while(!getResp) {
-      console.log(page);
       response = await axios.get(`https://api.themoviedb.org/3/discover/tv?api_key=${process.env.API_KEY}&language=fr&include_adult=false&with_genres=${id_cat}&page=${page}`);
-      console.log(response.data.results);
       if(response.data.results.length !== 0) {
         getResp = true;
       } else {
@@ -745,6 +804,30 @@ async function getMovieByPref(id_user){
   }
 }
 
+//fonction qui affiche retrouve 20 films en fonction des préférences catégorie de l'utilisateur
+async function insertVisionnage(id_user, id_film, id_episode){
+  const query = `
+    insert into
+    visionnage
+    (id_compte, id_film, id_episode, jour)
+    values
+    ($1, $2, $3, NOW())
+  `;
+
+  try {
+    console.log(id_film);
+    console.log(id_episode);
+    const client = await dbConn.connect();
+
+    await client.query(query, [id_user, id_film, id_episode]);
+
+    client.release();
+    return true;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 module.exports = {
   getAllFilm,
   getIdCategorie,
@@ -759,5 +842,6 @@ module.exports = {
   getMovieCatTMDB,
   getSerieCatTMDB,
   insertSerie,
-  getMovieByPref
+  getMovieByPref,
+  insertVisionnage
 };

@@ -5,6 +5,8 @@ const jwt = require('jsonwebtoken');
 //génère un token à la connection de l'utilisateur
 function generateToken(user) {
   const { id, nom, prenom, mail, admin } = user;
+  //on met les données de l'utilisateur connecté dans le payload
+  //permet de retrouver les informations de l'utilisateur ensuite
   const payload = { id, nom, prenom, mail, admin };
   const accessToken = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '1h' });
 
@@ -71,8 +73,8 @@ function refreshToken(req, res, next) {
 function setTokenCookie(res, token) {
   res.cookie('token', token, {
     httpOnly: true, // Empêcher l'accès au cookie depuis le code JavaScript côté client
-    //Secure: true, // Utiliser uniquement pour les connexions HTTPS
-    sameSite: 'strict',
+    Secure: true, // Utiliser uniquement pour les connexions HTTPS
+    sameSite: 'Strict',
     maxAge: 3600000 // Temps d'expiration du cookie en millisecondes (1 heure)
   });
 }

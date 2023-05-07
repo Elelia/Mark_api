@@ -5,7 +5,6 @@ const User = require('../models/class/users.class');
 const UserFunction = require('../models/users.model');
 // pour gérer les tokens
 const Token = require('../session');
-// envoie du mail de confirmation
 
 // fonction qui permet de connecter un utilisateur
 async function loginUser(req, res) {
@@ -27,6 +26,7 @@ async function loginUser(req, res) {
 
   const token = Token.generateToken(user);
 
+  //l'envoie de token dans les cookies ne fonctionne pas
   Token.setTokenCookie(res, token);
 
   res.status(200).json({
@@ -52,32 +52,46 @@ async function allUsers(req, res) {
 
 //permet de modifier certaines informations de l'utilisateur
 async function modifyUser(req, res) {
-  const id = req.body.userId;
-  const mdp = req.body.verifpassword;
-  const oldmdp = req.body.oldpassword;
-  const newmdp = req.body.newpassword;
+  let goodPassword;
+  let result = false;
+  const id = req.user.id;
   const { mail } = req.body;
   const { nom } = req.body;
   const { prenom } = req.body;
-  const result = await UserFunction.checkPassword(id, mdp);
-  if (result) {
-    res.status(200).json({
-      success: true,
-      message: 'Login successful',
-      user,
-      token: accessToken,
-    });
-  } else {
+  const mdp = req.body.verifyPassword;
+  //const oldmdp = req.body.oldpassword;
+  const newmdp = req.body.newPassword;
+  goodPassword = await UserFunction.checkPassword(id, mdp);
+  if(!goodPassword) {
+    console.log("pas bon");
     res.status(400).json({
       success: false,
-      message: 'Login failed',
+      message: 'Wrong password'
+    });
+  } else {
+    //si l'utilisateur a décidé de changer son mot de passe
+    if(newmdp != '') {
+      result = await UserFunction.updateUser(id, nom, prenom, mail, newmdp);
+    } else {
+      result = await UserFunction.updateUser(id, nom, prenom, mail, mdp);
+    }
+    console.log(result);
+    if(!result) {
+      res.status(400).json({
+        success: false,
+        message: 'Error while updating user'
+      });
+    }
+    res.status(200).json({
+      success: true,
+      message: 'Update user success'
     });
   }
 }
 
 // fonction qui retourne un objet user en fonction de son id
 async function userById(req, res) {
-  console.log(req.user.id);
+  //req.user.id correspond aux informations de l'utilisateur connecté que l'on a sauvegardé à l'authentification du token
   const result = await UserFunction.getUserById(req.user.id);
 
   if (!result.length) {
@@ -195,5 +209,6 @@ module.exports = {
   logoutUser,
   userByMail,
   createOneUser,
-  createPreferenceCategorie
+  createPreferenceCategorie,
+  modifyUser
 };

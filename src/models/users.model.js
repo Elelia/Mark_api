@@ -65,7 +65,6 @@ async function connectUser(mail, mdp) {
 async function getUserById(id) {
   const query = 'SELECT * FROM compte where id = $1';
 
-  let result;
   try {
     // on ouvre la connexion
     const client = await dbConn.connect();
@@ -83,34 +82,37 @@ async function getUserById(id) {
 }
 
 // modifie les informations d'un compte donné par l'id
-async function updateUser(id, mdp, nom, prenom, mail) {
-  dbConn.connect();
-
-  const query = 'UPDATE compte SET mdp, nom, prenom, mail  WHERE mail=$1';
+async function updateUser(id, nom, prenom, mail, mdp) {
+  const query = 'UPDATE compte SET nom=$2, prenom=$3, mail=$4, mdp=$5  WHERE id=$1';
 
   try {
+    const client = await dbConn.connect();
 
+    const hash = await bcrypt.hash(mdp, 10);
+    await client.query(query, [id, nom, prenom, mail, hash]);
+
+    client.release();
+    return true;
   } catch (err) {
     console.error(err);
   }
-  // console.log(result.rows);
-  return result.rows;
 }
 
 // connect one user
 async function checkPassword(id, mdp) {
-  dbConn.connect();
 
   const query = 'SELECT mdp FROM compte WHERE id=$1';
 
   let result = false;
   try {
+    const client = await dbConn.connect();
     // donc si y a une erreur de mdp il gère pas bien l'erreur et crash
-    res = await dbConn.query(query1, [id]);
+    res = await client.query(query, [id]);
     hash = res.rows[0].mdp;
     // let hash = await bcrypt.hash(password, 10);
     // await dbConn.query(query3, [mail, hash]);
     result = await bcrypt.compare(mdp, hash);
+    client.release();
   } catch (err) {
     console.error(err);
   }
