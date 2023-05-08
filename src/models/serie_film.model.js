@@ -48,6 +48,23 @@ async function getAllFilm() {
   }
 }
 
+async function getAllCategories(){
+  const query = `
+    select * from categorie
+  `;
+
+  try {
+    const client = await dbConn.connect();
+
+    const res = await client.query(query);
+
+    client.release();
+    return res.rows;
+  }catch(err) {
+    console.log(err);
+  }
+}
+
 async function getAllCategorieFilm() {
   const query = `
     select
@@ -289,9 +306,10 @@ async function getFilmByCategorieId(id) {
     cat.id as cat_id,
     cat.nom as cat_nom,
     f.date_sortie,
+    f.id as id_film,
     sf.url_vignette,
     sf.url_affiche,
-    trailer.url,
+    trailer.url as trailer,
     trailer.id as id_bande_annonce,
     v.id as id_video
     from
@@ -429,64 +447,6 @@ async function getMovieCatTMDB(id_categorie) {
   }
 }
 
-//retrouve 20 films de TMDB en fonction de du titre envoyé
-async function getMovieTitleTMDB(title) {
-  try {
-    const client = await dbConn.connect();
-    const results = [];
-    let page = Math.floor(Math.random() * 501);
-    let id_cat = '';
-    const query = 'select * from categorie where id = $1';
-    const query2 = 'select nom from serie_film where nom = $1';
-
-    const catResponse = await axios.get(`https://api.themoviedb.org/3/genre/movie/list?api_key=${process.env.API_KEY}&language=fr`);
-    const listCategories = catResponse.data.genres;
-
-    const res = await client.query(query,[id_categorie]);
-
-    //récupère l'id catégorie de tmdb en fonction de l'id de la catégorie en base
-    for(var i = 0; listCategories.length > i; i++) {
-      //console.log(listCategories[i].id);
-      if(listCategories[i].name ==  res.rows[0].nom) {
-        id_cat = listCategories[i].id;
-      }
-    }
-
-    // Retrieve movie data from TMDB
-    let getResp = false;
-    let response = null;
-    while(!getResp) {
-      response = await axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=${process.env.API_KEY}&language=fr&include_adult=false&with_genres=${id_cat}&page=${page}`);
-      if(response.data.results.length !== 0) {
-        getResp = true;
-      } else {
-        page = Math.floor(Math.random() * 501);
-      }
-    }
-
-    const movieList = response.data.results;
-
-    for (const movie of movieList) {
-      const resp = await client.query(query2,[movie.title]);
-      if(!resp.rows[0]) {
-        const data = {
-          id: movie.id,
-          title: movie.title,
-          categorie: res.rows[0].nom,
-          overview:  movie.overview,
-          release_date: movie.release_date
-        };
-        results.push(data);
-      }
-    }
-    client.release();
-
-    return results;
-  } catch (error) {
-    console.error(error);
-  }
-}
-
 //retrouve 20 séries de TMDB en fonction de l'id catégorie envoyé
 async function getSerieCatTMDB(id_categorie) {
   try {
@@ -545,6 +505,7 @@ async function getSerieCatTMDB(id_categorie) {
   }
 }
 
+//ajotue une série en base de données
 async function insertSerie(id_serie) {
   try {
     const client = await dbConn.connect();
@@ -815,8 +776,6 @@ async function insertVisionnage(id_user, id_film, id_episode){
   `;
 
   try {
-    console.log(id_film);
-    console.log(id_episode);
     const client = await dbConn.connect();
 
     await client.query(query, [id_user, id_film, id_episode]);
@@ -828,8 +787,98 @@ async function insertVisionnage(id_user, id_film, id_episode){
   }
 }
 
+//permet de mettre à jour des films
+async function updateMovie(id, nom, age_min, release, vignette, affiche, trailer) {
+  const query = `
+    UPDATE 
+    serie_film
+    SET 
+    nom=$2, age_min=$3, url_vignette=$4, url_affiche=$5
+    WHERE 
+    id=$1
+  `;
+  const query2 = `
+    UPDATE 
+    film
+    SET 
+    date_sortie=$2
+    WHERE 
+    id_serie_film=$1
+  `;
+  const query3 = `
+    UPDATE 
+    video
+    SET 
+    url=$2
+    WHERE id IN (
+      SELECT id_video
+      FROM film
+      WHERE id_serie_film = $1
+    )
+  `;
+
+  try {
+    const client = await dbConn.connect();
+
+    await client.query(query, [id, nom, age_min, vignette, affiche]);
+    await client.query(query2, [id, release]);
+    await client.query(query3, [id, trailer]);
+
+    client.release();
+    return true;
+  } catch(err){
+    console.error(err);
+  }
+}
+
+//supprimer un film en base
+async function deleteMovie(id, id_film) {
+  const query = `
+      delete from personne_serie_film where id_serie_film=$1
+    `;
+    const query2 = `
+      delete from avis where id_serie_film=$1
+    `;
+    const query3 = `
+      delete from personne_serie_film where id_serie_film=$1
+    `;
+    const query4 = `
+      delete from visionnage where id_film=$1
+    `;
+    const query5 = `
+      delete from categorie_serie_film where id_serie_film=$1
+    `;
+    const query6 = `
+      delete from film where id=$1
+    `;
+    const query7 = `
+      delete from video where id in (select id_video from film where id=$1)
+    `;
+    const query8 = `
+      delete from serie_film where id=$1
+    `;
+  try {
+    const client = await dbConn.connect();
+
+    await client.query(query, [id]);
+    await client.query(query2, [id]);
+    await client.query(query3, [id]);
+    await client.query(query4, [id_film]);
+    await client.query(query5, [id]);
+    await client.query(query6, [id_film]);
+    await client.query(query7, [id_film]);
+    await client.query(query8, [id]);
+
+    client.release();
+    return true;
+  } catch(err) {
+    console.log(err);
+  }
+}
+
 module.exports = {
   getAllFilm,
+  getAllCategories,
   getIdCategorie,
   getAllCategorieFilm,
   insertAvis,
@@ -843,5 +892,7 @@ module.exports = {
   getSerieCatTMDB,
   insertSerie,
   getMovieByPref,
-  insertVisionnage
+  insertVisionnage,
+  updateMovie,
+  deleteMovie
 };

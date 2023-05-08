@@ -123,7 +123,8 @@ async function oneUrlVideo(req, res) {
 async function filmByCategorieId(req, res) {
   const results = await SeriefilmFunction.getFilmByCategorieId(req.params.cat_id);
   if (results) {
-    const allSeriefilm = results.map((oneSF) => new Seriefilm(oneSF.id_serie_film, oneSF.nom, oneSF.age_min, oneSF.resume, oneSF.id_bande_annonce, oneSF.url_vignette, oneSF.url_affiche, oneSF.date_sortie, oneSF.id_video, oneSF.cat_id, oneSF.cat_nom));
+    const allSeriefilm = results.map((oneSF) => new Film(oneSF.id_serie_film, oneSF.nom, oneSF.age_min, oneSF.resume, oneSF.id_bande_annonce, oneSF.url_vignette, oneSF.url_affiche, oneSF.date_sortie, oneSF.id_video, oneSF.cat_id, oneSF.cat_nom, oneSF.id_film, oneSF.trailer));
+    console.log(allSeriefilm);
     res.status(200).json(allSeriefilm);
   } else {
     res.status(500).send('No values');
@@ -196,12 +197,43 @@ async function filmByPreference(req, res) {
   }
 }
 
+//permet de savoir si un utilisateur a vu une vidéo
 async function videoSaw(req, res) {
   const results = await SeriefilmFunction.insertVisionnage(req.user.id, req.body.id_film, req.body.id_episode);
   if (!results) {
     res.status(500).send('No values');
   }
   res.status(200).json('Success');
+}
+
+//modifie un film
+async function updateMovie(req, res) {
+  const result = await SeriefilmFunction.updateMovie(req.body.id_movie, req.body.nom, req.body.age_min, req.body.date, req.body.vignette, req.body.affiche, req.body.trailer);
+  if(!result) {
+    res.status(400).json({
+      success: false,
+      message: 'Error while updating movie',
+    });
+  }
+  res.status(200).json({
+    success: true,
+    message: 'Update movie successful',
+  });
+}
+
+//supprime un film
+async function deleteMovie(req, res) {
+  const result = await SeriefilmFunction.deleteMovie(req.body.id, req.body.id_film);
+  if(!result) {
+    res.status(400).json({
+      success: false,
+      message: 'Error while deleteing movie',
+    });
+  }
+  res.status(200).json({
+    success: true,
+    message: 'Delete movie selected successful',
+  });
 }
 
 module.exports = {
@@ -218,5 +250,7 @@ module.exports = {
   getSeriesCatTMDB,
   insertSerieSelected,
   filmByPreference,
-  videoSaw
+  videoSaw,
+  updateMovie,
+  deleteMovie
 };

@@ -61,69 +61,77 @@ async function insertMovie(movieId) {
     const resultsCrew = credits.data.crew;
 
     // insert cast of the movie
-    for (var i = 0; i < 10; i++) {
-      const { name } = resultsCast[i];
-      const department = resultsCast[i].known_for_department;
-      const role = utils.Trad(department);
-      const split = name.indexOf(' ');
-      const prenom = name.substring(0, split);
-      const nom = name.substring(split + 1);
-      // vérifier que la personne n'est pas déjà présente dans la base
-      const ifPresent = await dbConn.query(
-        query8,
-        [nom, prenom],
-      );
-      if (!ifPresent.rows[0]) {
-        const getid = await dbConn.query(
-          query6,
-          [nom, prenom],
-        );
-        idCast = getid.rows[0].id;
-        await dbConn.query(
-          query7,
-          [idCast, idFilm, role],
-        );
-      } else {
-        await dbConn.query(
-          query7,
-          [ifPresent.rows[0].id, idFilm, role],
-        );
+    if(resultsCast) {
+      for (var i = 0; i < 10; i++) {
+        if(resultsCast[i]) {
+          const { name } = resultsCast[i];
+          const department = resultsCast[i].known_for_department;
+          const role = utils.Trad(department);
+          const split = name.indexOf(' ');
+          const prenom = name.substring(0, split);
+          const nom = name.substring(split + 1);
+          // vérifier que la personne n'est pas déjà présente dans la base
+          const ifPresent = await dbConn.query(
+            query8,
+            [nom, prenom],
+          );
+          if (!ifPresent.rows[0]) {
+            const getid = await dbConn.query(
+              query6,
+              [nom, prenom],
+            );
+            idCast = getid.rows[0].id;
+            await dbConn.query(
+              query7,
+              [idCast, idFilm, role],
+            );
+          } else {
+            await dbConn.query(
+              query7,
+              [ifPresent.rows[0].id, idFilm, role],
+            );
+          }
+        }
       }
     }
 
     // insert crew of the movie
-    for (var i = 0; i < 10; i++) {
-      const { name } = resultsCrew[i];
-      const department = resultsCrew[i].known_for_department;
-      let role = '';
-      if (resultsCrew[i].job == 'Director') {
-        role = 'realisateur';
-      } else {
-        role = utils.Trad(department);
-      }
-      const split = name.indexOf(' ');
-      const prenom = name.substring(0, split);
-      const nom = name.substring(split + 1);
-      // vérifier que la personne n'est pas déjà présente dans la base
-      const ifPresent = await dbConn.query(
-        query8,
-        [nom, prenom],
-      );
-      if (!ifPresent.rows[0]) {
-        const getid = await dbConn.query(
-          query6,
-          [nom, prenom],
-        );
-        idCrew = getid.rows[0].id;
-        await dbConn.query(
-          query7,
-          [idCrew, idFilm, role],
-        );
-      } else {
-        await dbConn.query(
-          query7,
-          [ifPresent.rows[0].id, idFilm, role],
-        );
+    if(resultsCrew) {
+      for (var i = 0; i < 10; i++) {
+        if(resultsCrew[i]) {
+          const { name } = resultsCrew[i];
+          const department = resultsCrew[i].known_for_department;
+          let role = '';
+          if (resultsCrew[i].job == 'Director') {
+            role = 'realisateur';
+          } else {
+            role = utils.Trad(department);
+          }
+          const split = name.indexOf(' ');
+          const prenom = name.substring(0, split);
+          const nom = name.substring(split + 1);
+          // vérifier que la personne n'est pas déjà présente dans la base
+          const ifPresent = await dbConn.query(
+            query8,
+            [nom, prenom],
+          );
+          if (!ifPresent.rows[0]) {
+            const getid = await dbConn.query(
+              query6,
+              [nom, prenom],
+            );
+            idCrew = getid.rows[0].id;
+            await dbConn.query(
+              query7,
+              [idCrew, idFilm, role],
+            );
+          } else {
+            await dbConn.query(
+              query7,
+              [ifPresent.rows[0].id, idFilm, role],
+            );
+          }
+        }
       }
     }
 

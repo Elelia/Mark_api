@@ -202,6 +202,51 @@ async function createPreferenceCategorie(req, res) {
   });
 }
 
+async function formContact(req, res) {
+  let send;
+  const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.ADDRESS_MAIL,
+      pass: process.env.PASSWORD_MAIL,
+    },
+  });
+  /* transporter.verify(function (error, success) {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log("Server is ready to take our messages");
+          }
+      }); */
+  const message = {
+    from: req.body.mail,
+    to: "projetmarkensitech@gmail.com",
+    subject: "Formulaire de contact Mark",
+    text: req.body.message
+  };
+  transporter.sendMail(message, (err, info) => {
+    if (err) {
+      send = false;
+      console.log(err);
+    } else {
+      send = true;
+      console.log(`E-mail envoyé: ${info.response}`);
+    }
+  });
+  if(!send) {
+    res.status(400).json({
+      success: false,
+      message: 'Error while sending mail',
+    });
+  }
+  res.status(200).json({
+    success: true,
+    message: 'sending mail is a success',
+  });
+}
+
 module.exports = {
   loginUser,
   allUsers,
@@ -210,5 +255,6 @@ module.exports = {
   userByMail,
   createOneUser,
   createPreferenceCategorie,
-  modifyUser
+  modifyUser,
+  formContact
 };

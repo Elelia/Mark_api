@@ -36,4 +36,10 @@ router.post('/serie/insertSerie', SerieFilm.insertSerieSelected);
 
 router.post('/film/saw', session.authenticateToken, SerieFilm.videoSaw);
 
+router.get('/film/modif/:cat_id/:title');
+
+router.put('/film/update', SerieFilm.updateMovie);
+
+router.delete('/film/delete', SerieFilm.deleteMovie);
+
 module.exports = router;
