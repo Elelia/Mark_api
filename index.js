@@ -46,9 +46,8 @@ app.use('/users', usersRoute);
 app.use('/seriefilm', serfilmRoute);
 app.use('/tmdb', tmdbRoute);
 
-app.listen(port, () => {  
+/*app.listen(port, () => {  
   console.log(`Serveur à l'écoute sur le port ${port}`)      
-});
+});*/
 
-//export the Express API
 module.exports = app;
