@@ -202,24 +202,25 @@ async function createPreferenceCategorie(req, res) {
   });
 }
 
+//permet d'envoyer un message au mail de mark
+//ne fonctionne pas, problème au niveau des autorisations, il faudrait utiliser une autre méthode
 async function formContact(req, res) {
-  let send;
   const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
     secure: true,
     auth: {
-      user: process.env.ADDRESS_MAIL,
+      user: req.body.mail,
       pass: process.env.PASSWORD_MAIL,
     },
   });
-  /* transporter.verify(function (error, success) {
-          if (error) {
-            console.log(error);
-          } else {
-            console.log("Server is ready to take our messages");
-          }
-      }); */
+  transporter.verify(function (error, success) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Server is ready to take our messages");
+    }
+  });
   const message = {
     from: req.body.mail,
     to: "projetmarkensitech@gmail.com",
@@ -228,22 +229,18 @@ async function formContact(req, res) {
   };
   transporter.sendMail(message, (err, info) => {
     if (err) {
-      send = false;
       console.log(err);
+      res.status(400).json({
+        success: false,
+        message: 'Error while sending mail',
+      });
     } else {
-      send = true;
       console.log(`E-mail envoyé: ${info.response}`);
+      res.status(200).json({
+        success: true,
+        message: 'sending mail is a success',
+      });
     }
-  });
-  if(!send) {
-    res.status(400).json({
-      success: false,
-      message: 'Error while sending mail',
-    });
-  }
-  res.status(200).json({
-    success: true,
-    message: 'sending mail is a success',
   });
 }
 

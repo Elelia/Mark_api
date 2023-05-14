@@ -12,7 +12,7 @@ async function allFilm(req, res) {
   const results = await SeriefilmFunction.getAllFilm();
   if (results) {
     // create a new user object
-    const allSeriefilm = results.map((oneSF) => new Film(oneSF.id_serie_film, oneSF.nom, oneSF.age_min, oneSF.resume, oneSF.id_bande_annonce, oneSF.url_vignette, oneSF.url_affiche, oneSF.date_sortie, oneSF.id_video, oneSF.cat_id, oneSF.cat_nom, oneSF.id_film));
+    const allSeriefilm = results.map((oneSF) => new Film(oneSF.id_serie_film, oneSF.nom, oneSF.age_min, oneSF.resume, oneSF.id_bande_annonce, oneSF.url_vignette, oneSF.url_affiche, oneSF.date_sortie, oneSF.id_video, oneSF.cat_id, oneSF.cat_nom, oneSF.id_film, oneSF.trailer));
     res.status(200).json(allSeriefilm);
   } else {
     res.status(404).send('No values');
@@ -236,6 +236,28 @@ async function deleteMovie(req, res) {
   });
 }
 
+async function movieMostSeen(req, res) {
+  const results = await SeriefilmFunction.getMovieMostSeen();
+  if (results) {
+    // create a new user object
+    const allSeriefilm = results.map((oneSF) => new Film(oneSF.id_serie_film, oneSF.nom, oneSF.age_min, oneSF.resume, oneSF.id_bande_annonce, oneSF.url_vignette, oneSF.url_affiche, oneSF.date_sortie, oneSF.id_video, oneSF.cat_id, oneSF.cat_nom, oneSF.id_film, oneSF.trailer));
+    res.status(200).json(allSeriefilm);
+  } else {
+    res.status(404).send('No values');
+  }
+}
+
+async function movieLast(req, res) {
+  const results = await SeriefilmFunction.getLastMovie();
+  if (results) {
+    // create a new user object
+    const allSeriefilm = results.map((oneSF) => new Film(oneSF.id_serie_film, oneSF.nom, oneSF.age_min, oneSF.resume, oneSF.id_bande_annonce, oneSF.url_vignette, oneSF.url_affiche, oneSF.date_sortie, oneSF.id_video, oneSF.cat_id, oneSF.cat_nom, oneSF.id_film, oneSF.trailer));
+    res.status(200).json(allSeriefilm);
+  } else {
+    res.status(404).send('No values');
+  }
+}
+
 module.exports = {
   allFilm,
   allCategorieFilm,
@@ -252,5 +274,7 @@ module.exports = {
   filmByPreference,
   videoSaw,
   updateMovie,
-  deleteMovie
+  deleteMovie,
+  movieMostSeen,
+  movieLast
 };

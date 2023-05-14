@@ -42,4 +42,8 @@ router.put('/film/update', SerieFilm.updateMovie);
 
 router.delete('/film/delete', SerieFilm.deleteMovie);
 
+router.get('/film/most_seen', SerieFilm.movieMostSeen);
+
+router.get('/film/last', SerieFilm.movieLast);
+
 module.exports = router;

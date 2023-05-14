@@ -28,6 +28,6 @@ router.post('/prefcat', Users.createPreferenceCategorie);
 
 router.put('/updateUser', session.authenticateToken, Users.modifyUser);
 
-router.post('/contact', session.authenticateToken, Users.formContact);
+router.post('/contact', Users.formContact);
 
 module.exports = router;

@@ -10,7 +10,8 @@ async function getAllFilm() {
 		sf.id as id_serie_film,
     sf.*,
 		f.id as id_film,
-    f.*
+    f.*,
+    trailer.url as trailer
     from 
     categorie cat
     inner join
@@ -25,10 +26,15 @@ async function getAllFilm() {
 		film f
 		on
 		f.id_serie_film = sf.id
+    inner join
+    video trailer
+    on
+    sf.id_bande_annonce = trailer.id
     group by
     cat.id,
     sf.id,
-    f.id
+    f.id,
+    trailer.id
     order by
     cat.id
   `;
@@ -124,6 +130,7 @@ async function getIdCategorie() {
   }
 }
 
+//retrouve toutes les séries de la base de données
 async function getAllSerie() {
   const query = `
     select 
@@ -158,6 +165,54 @@ async function getAllSerie() {
     const res = await client.query(query);
 
     // on ferme la connexion
+    client.release();
+    return res.rows;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function getSaisonByIdSerie() {
+  const query = `
+    select
+    s.*
+    from
+    saison s
+    inner join
+    serie_film sf
+    on
+    s.id_serie_film = sf.id
+  `;
+
+  try {
+    const client = await dbConn.connect();
+
+    const res = await client.query(query);
+
+    client.release();
+    return res.rows;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function getEpisodeBySaison() {
+  const query = `
+    select
+    s.*
+    from
+    saison s
+    inner join
+    serie_film sf
+    on
+    s.id_serie_film = sf.id
+  `;
+
+  try {
+    const client = await dbConn.connect();
+
+    const res = await client.query(query);
+
     client.release();
     return res.rows;
   } catch (err) {
@@ -876,6 +931,124 @@ async function deleteMovie(id, id_film) {
   }
 }
 
+async function getMovieMostSeen(){
+  const query = `
+    select distinct on (f.id)
+    cat.id as cat_id,
+    cat.nom as cat_nom,
+    sf.id as id_serie_film,
+    sf.*,
+    f.id as id_film,
+    f.*,
+    trailer.url as trailer
+    from 
+    categorie cat
+    inner join
+    categorie_serie_film csf
+    on
+    cat.id = csf.id_categorie
+    inner join
+    serie_film sf
+    on
+    sf.id = csf.id_serie_film
+    inner join
+    film f
+    on
+    f.id_serie_film = sf.id
+    inner join
+    video trailer
+    on
+    sf.id_bande_annonce = trailer.id
+    where
+    f.id in (
+      select
+      f.id
+      from
+      visionnage v
+      inner join
+      film f
+      on
+      v.id_film = f.id
+      group by
+      v.id_film,
+      f.id
+      order by
+      count(id_film) desc
+    )
+    group by
+    cat.id,
+    sf.id,
+    f.id,
+    trailer.id
+    limit 20
+  `;
+
+  try {
+    const client = await dbConn.connect();
+
+    const res = await client.query(query);
+
+    client.release();
+    return res.rows;
+  } catch(err) {
+    console.log(err);
+  }
+}
+
+async function getLastMovie(){
+  const query = `
+    select * 
+    from (
+      select distinct on (f.id)
+      cat.id as cat_id,
+      cat.nom as cat_nom,
+      sf.id as id_serie_film,
+      sf.*,
+      f.id as id_film,
+      f.*,
+      trailer.url as trailer
+      from 
+      categorie cat
+      inner join
+      categorie_serie_film csf
+      on
+      cat.id = csf.id_categorie
+      inner join
+      serie_film sf
+      on
+      sf.id = csf.id_serie_film
+      inner join
+      film f
+      on
+      f.id_serie_film = sf.id
+      inner join
+      video trailer
+      on
+      sf.id_bande_annonce = trailer.id
+      group by
+      cat.id,
+      sf.id,
+      f.id,
+      trailer.id
+      order by
+      f.id, f.date_sortie desc
+    ) sub
+    order by date_sortie desc
+    limit 20
+  `;
+
+  try {
+    const client = await dbConn.connect();
+
+    const res = await client.query(query);
+
+    client.release();
+    return res.rows;
+  } catch(err) {
+    console.log(err);
+  }
+}
+
 module.exports = {
   getAllFilm,
   getAllCategories,
@@ -894,5 +1067,7 @@ module.exports = {
   getMovieByPref,
   insertVisionnage,
   updateMovie,
-  deleteMovie
+  deleteMovie,
+  getMovieMostSeen,
+  getLastMovie
 };
