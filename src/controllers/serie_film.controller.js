@@ -1,7 +1,9 @@
 const Seriefilm = require('../models/class/serie_film.class');
 const Film = require('../models/class/film.class');
 const SeriefilmFunction = require('../models/serie_film.model');
-const Session = require('../session');
+const FilmFunction = require('../models/film.model');
+const SerieFunction = require('../models/serie.model');
+const Session = require('../utils/session');
 const fs = require('fs');
 const TMDBFunction = require('../models/tmdb');
 
@@ -9,7 +11,7 @@ const TMDBFunction = require('../models/tmdb');
 
 // fonction qui retourne tous les fimms
 async function allFilm(req, res) {
-  const results = await SeriefilmFunction.getAllFilm();
+  const results = await FilmFunction.getAllFilm();
   if (results) {
     // create a new user object
     const allSeriefilm = results.map((oneSF) => new Film(oneSF.id_serie_film, oneSF.nom, oneSF.age_min, oneSF.resume, oneSF.id_bande_annonce, oneSF.url_vignette, oneSF.url_affiche, oneSF.date_sortie, oneSF.id_video, oneSF.cat_id, oneSF.cat_nom, oneSF.id_film, oneSF.trailer));
@@ -21,7 +23,7 @@ async function allFilm(req, res) {
 
 // fonction qui retourne les catégories des films
 async function allCategorieFilm(req, res) {
-  const results = await SeriefilmFunction.getAllCategorieFilm();
+  const results = await FilmFunction.getAllCategorieFilm();
   if (results) {
     res.status(200).json(results);
   } else {
@@ -31,7 +33,7 @@ async function allCategorieFilm(req, res) {
 
 // fonction qui retourne toutes les séries
 async function allSerie(req, res) {
-  const results = await SeriefilmFunction.getAllSerie();
+  const results = await SerieFunction.getAllSerie();
   if (results) {
     // create a new user object
     const allSeriefilm = results.map((oneSF) => new Seriefilm(oneSF.id_serie_film, oneSF.nom, oneSF.age_min, oneSF.resume, oneSF.id_bande_annonce, oneSF.url_vignette, oneSF.url_affiche, oneSF.date_sortie, oneSF.id_video, oneSF.cat_id, oneSF.cat_nom));
@@ -43,7 +45,7 @@ async function allSerie(req, res) {
 
 // fonction qui retourne les catégories des séries
 async function allCategorieSerie(req, res) {
-  const results = await SeriefilmFunction.getAllCategorieSerie();
+  const results = await SerieFunction.getAllCategorieSerie();
   if (results) {
     res.status(200).json(results);
   } else {
@@ -51,40 +53,9 @@ async function allCategorieSerie(req, res) {
   }
 }
 
-// pas utilisée mais finira peut-être pas être utile ?
-async function allSeriefilmByCategorie(req, res) {
-  const ids = await SeriefilmFunction.getIdCategorie();
-  const results = [];
-  if (ids.length > 0) {
-    for (let i = 0; ids.length > i; i++) {
-      // console.log(ids[i].id + "******");
-      const get = await SeriefilmFunction.getAllSeriefilmByCategorie(ids[i].id);
-      // console.log(get + [ids[i].id]);
-      if (get != '') {
-        results[i] = get;
-      }
-      // results[i] = await SeriefilmFunction.getAllSeriefilmByCategorie(ids[i].id);
-      // console.log(results[i] + "*****");
-    }
-    // const results = await SeriefilmFunction.getAllSeriefilmByCategorie(ids);
-    // console.log(results);
-    const allSeriefilm = [];
-    for (let i = 0; results.length > i; i++) {
-      allSeriefilm[i] = results[i].map((oneSF) => new Seriefilm(oneSF.id, oneSF.nom, oneSF.type, oneSF.age_min, oneSF.resume, oneSF.annee, oneSF.id_video, oneSF.actif, oneSF.url));
-    }
-    // console.log(allSeriefilm);
-    // let allSeriefilm = results.map(oneSF =>
-    //     new Seriefilm(oneSF.id, oneSF.nom, oneSF.type, oneSF.age_min, oneSF.resume, oneSF.annee, oneSF.id_video, oneSF.actif, oneSF.url)
-    //     );
-    res.status(200).json(allSeriefilm);
-  } else {
-    res.status(500).send('No values');
-  }
-}
-
 // fonction qui retourne les catégories
 async function addAvis(req, res) {
-  const id_compte = req.body.userId;
+  const id_compte = req.user.id;
   const id_serie_film = req.body.seriefilmId;
   const { comment } = req.body;
   const { note } = req.body;
@@ -121,7 +92,7 @@ async function oneUrlVideo(req, res) {
 
 // fonction qui retourne les informations de films de l'id de la catégorie reçu
 async function filmByCategorieId(req, res) {
-  const results = await SeriefilmFunction.getFilmByCategorieId(req.params.cat_id);
+  const results = await FilmFunction.getFilmByCategorieId(req.params.cat_id);
   if (results) {
     const allSeriefilm = results.map((oneSF) => new Film(oneSF.id_serie_film, oneSF.nom, oneSF.age_min, oneSF.resume, oneSF.id_bande_annonce, oneSF.url_vignette, oneSF.url_affiche, oneSF.date_sortie, oneSF.id_video, oneSF.cat_id, oneSF.cat_nom, oneSF.id_film, oneSF.trailer));
     console.log(allSeriefilm);
@@ -143,7 +114,7 @@ async function getMoviesTMDB(req, res) {
     const movieIds = movies.map((movie) => movie.id);
 
     for (const movieId of movieIds) {
-      const res = await SeriefilmFunction.getMovieTMDB(movieId, req.body.id);
+      const res = await FilmFunction.getMovieTMDB(movieId, req.body.id);
       console.log(res);
       results.push(res);
     }
@@ -153,7 +124,7 @@ async function getMoviesTMDB(req, res) {
 
 //retrouve 20 films de TMDB en fonction de l'id catégorie envoyé
 async function getMoviesCatTMDB(req, res) {
-  const results = await SeriefilmFunction.getMovieCatTMDB(req.params.id);
+  const results = await FilmFunction.getMovieCatTMDB(req.params.id);
   if(!results) {
     res.status(500).send('No values');
   }
@@ -171,7 +142,7 @@ async function insertMovieSelected(req, res) {
 
 //retrouve 20 séries de TMDB en fonction de l'id catégorie envoyé
 async function getSeriesCatTMDB(req, res) {
-  const results = await SeriefilmFunction.getSerieCatTMDB(req.params.id);
+  const results = await SerieFunction.getSerieCatTMDB(req.params.id);
   if(!results) {
     res.status(500).send('No values');
   }
@@ -180,7 +151,7 @@ async function getSeriesCatTMDB(req, res) {
 
 //ajoute en base les séries sélectionné via l'admin
 async function insertSerieSelected(req, res) {
-  await SeriefilmFunction.insertSerie(req.body.id_serie);
+  await SerieFunction.insertSerie(req.body.id_serie);
   res.status(200).json({
     success: true,
     message: 'Insert serie selected successful',
@@ -188,7 +159,7 @@ async function insertSerieSelected(req, res) {
 }
 
 async function filmByPreference(req, res) {
-  const results = await SeriefilmFunction.getMovieByPref(req.user.id);
+  const results = await FilmFunction.getMovieByPref(req.user.id);
   if (results) {
     const allSeriefilm = results.map((oneSF) => new Seriefilm(oneSF.id_serie_film, oneSF.nom, oneSF.age_min, oneSF.resume, oneSF.id_bande_annonce, oneSF.url_vignette, oneSF.url_affiche, oneSF.date_sortie, oneSF.id_video, oneSF.cat_id, oneSF.cat_nom));
     res.status(200).json(allSeriefilm);
@@ -208,7 +179,7 @@ async function videoSaw(req, res) {
 
 //modifie un film
 async function updateMovie(req, res) {
-  const result = await SeriefilmFunction.updateMovie(req.body.id_movie, req.body.nom, req.body.age_min, req.body.date, req.body.vignette, req.body.affiche, req.body.trailer);
+  const result = await FilmFunction.updateMovie(req.body.id_movie, req.body.nom, req.body.age_min, req.body.date, req.body.vignette, req.body.affiche, req.body.trailer);
   if(!result) {
     res.status(400).json({
       success: false,
@@ -223,7 +194,7 @@ async function updateMovie(req, res) {
 
 //supprime un film
 async function deleteMovie(req, res) {
-  const result = await SeriefilmFunction.deleteMovie(req.body.id, req.body.id_film);
+  const result = await FilmFunction.deleteMovie(req.body.id, req.body.id_film);
   if(!result) {
     res.status(400).json({
       success: false,
@@ -237,7 +208,7 @@ async function deleteMovie(req, res) {
 }
 
 async function movieMostSeen(req, res) {
-  const results = await SeriefilmFunction.getMovieMostSeen();
+  const results = await FilmFunction.getMovieMostSeen();
   if (results) {
     // create a new user object
     const allSeriefilm = results.map((oneSF) => new Film(oneSF.id_serie_film, oneSF.nom, oneSF.age_min, oneSF.resume, oneSF.id_bande_annonce, oneSF.url_vignette, oneSF.url_affiche, oneSF.date_sortie, oneSF.id_video, oneSF.cat_id, oneSF.cat_nom, oneSF.id_film, oneSF.trailer));
@@ -248,11 +219,31 @@ async function movieMostSeen(req, res) {
 }
 
 async function movieLast(req, res) {
-  const results = await SeriefilmFunction.getLastMovie();
+  const results = await FilmFunction.getLastMovie();
   if (results) {
     // create a new user object
     const allSeriefilm = results.map((oneSF) => new Film(oneSF.id_serie_film, oneSF.nom, oneSF.age_min, oneSF.resume, oneSF.id_bande_annonce, oneSF.url_vignette, oneSF.url_affiche, oneSF.date_sortie, oneSF.id_video, oneSF.cat_id, oneSF.cat_nom, oneSF.id_film, oneSF.trailer));
     res.status(200).json(allSeriefilm);
+  } else {
+    res.status(404).send('No values');
+  }
+}
+
+//fonction qui récupère les informations des saisons d'une série
+async function saisonByIdSerie(req, res) {
+  const results = await SerieFunction.getSaisonByIdSerie(req.params.id_serie);
+  if (results) {
+    res.status(200).json(results);
+  } else {
+    res.status(404).send('No values');
+  }
+}
+
+//fonction qui récupère les informations des saisons d'une série
+async function episodeByIdSaison(req, res) {
+  const results = await SerieFunction.getEpisodeBySaison(req.params.id_saison);
+  if (results) {
+    res.status(200).json(results);
   } else {
     res.status(404).send('No values');
   }
@@ -276,5 +267,7 @@ module.exports = {
   updateMovie,
   deleteMovie,
   movieMostSeen,
-  movieLast
+  movieLast,
+  saisonByIdSerie,
+  episodeByIdSaison
 };

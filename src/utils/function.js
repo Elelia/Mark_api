@@ -60,6 +60,7 @@ function Trad(departement) {
     return catId;
   }
 
+  //traduit les catégories pour l'ajout d'un film/série via le panneau administrateur
   function TradCatAdd(categorie) {
     let catName = '';
     if (categorie == 'Adventure') {

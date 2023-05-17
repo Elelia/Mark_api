@@ -4,7 +4,7 @@ const User = require('../models/class/users.class');
 // les fonctions liées à user
 const UserFunction = require('../models/users.model');
 // pour gérer les tokens
-const Token = require('../session');
+const Token = require('../utils/session');
 
 // fonction qui permet de connecter un utilisateur
 async function loginUser(req, res) {

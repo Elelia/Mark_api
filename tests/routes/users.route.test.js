@@ -12,6 +12,7 @@ describe('Test the root path', () => {
 });
 
 //test la route /auth/login
+//a voir comment ça fonctionne pour les routes post
 describe('Test the root path', () => {
     test('It should response the POST method', (done) => {
       request(app).post('/users/auth/login').then((response) => {

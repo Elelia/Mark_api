@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 const SerieFilm = require('../controllers/serie_film.controller');
-const session = require('../session');
+const session = require('../utils/session');
 
 // start DDB
 router.get('/film', SerieFilm.allFilm);
@@ -14,7 +14,7 @@ router.get('/serie', SerieFilm.allSerie);
 
 router.get('/serie/categories', SerieFilm.allCategorieSerie);
 
-router.post('/avis/insert', SerieFilm.addAvis);
+router.post('/avis/insert', session.authenticateToken, SerieFilm.addAvis);
 
 router.get('/avis/:serie_film_id', SerieFilm.allAvis);
 
@@ -36,8 +36,6 @@ router.post('/serie/insertSerie', SerieFilm.insertSerieSelected);
 
 router.post('/film/saw', session.authenticateToken, SerieFilm.videoSaw);
 
-router.get('/film/modif/:cat_id/:title');
-
 router.put('/film/update', SerieFilm.updateMovie);
 
 router.delete('/film/delete', SerieFilm.deleteMovie);
@@ -45,5 +43,9 @@ router.delete('/film/delete', SerieFilm.deleteMovie);
 router.get('/film/most_seen', SerieFilm.movieMostSeen);
 
 router.get('/film/last', SerieFilm.movieLast);
+
+router.get('/serie/saison/:id_serie', SerieFilm.saisonByIdSerie);
+
+router.get('/serie/saison/episode/:id_saison', SerieFilm.episodeByIdSaison);
 
 module.exports = router;

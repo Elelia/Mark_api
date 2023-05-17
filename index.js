@@ -5,7 +5,6 @@ const tmdbRoute = require('./src/routes/tmdb.route');
 
 const express = require('express');
 const app = express();
-const port = process.env.PORT || 5000;
 var cors = require('cors');
 const cookieParser = require('cookie-parser');
 
@@ -37,9 +36,6 @@ app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
   next();
 });
-
-//test de connexion sur le localhost
-
 
 //utilisation des routes
 app.use('/users', usersRoute);

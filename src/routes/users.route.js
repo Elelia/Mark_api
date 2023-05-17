@@ -4,7 +4,7 @@ const { route } = require('express/lib/application');
 const router = express.Router();
 
 const Users = require('../controllers/users.controller');
-const session = require('../session');
+const session = require('../utils/session');
 
 // route qui retourne tous les comptes de la db
 router.get('/', Users.allUsers);
