@@ -12,6 +12,8 @@ router.get('/', Users.allUsers);
 // route qui permet de connecter un utilisateur s'il a rentré son bon mail et mpd
 router.post('/auth/login', Users.loginUser);
 
+router.post('/auth/google', Users.loginGoogle);
+
 router.get('/auth/test/:id', Users.allUsers);
 
 router.post('/auth/refresh/');

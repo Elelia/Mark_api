@@ -70,13 +70,18 @@ async function getSaisonByIdSerie(id) {
 async function getEpisodeBySaison(id) {
   const query = `
     select
-    e.*
+    e.*,
+    v.url
     from
     episode e
     inner join
     saison s
     on
     e.id_saison = s.id
+    inner join
+    video v
+    on
+    e.id_video = v.id
     where
     s.id = $1
   `;

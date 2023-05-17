@@ -2,13 +2,12 @@
 require('dotenv').config();
 
 class User {
-  constructor(id, nom, prenom, mail, admin, mdp) {
+  constructor(id, nom, prenom, mail, admin) {
     this.id = id;
     this.nom = nom;
     this.prenom = prenom;
     this.mail = mail;
     this.admin = admin;
-    this.mdp = mdp;
   }
 
   getId() {
@@ -37,14 +36,6 @@ class User {
 
   setMail(mail) {
     this.mail = mail;
-  }
-
-  getMdp() {
-    return this.mdp;
-  }
-
-  setMdp(mdp) {
-    this.mdp = mdp;
   }
 
   getAdmin() {

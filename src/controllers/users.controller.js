@@ -37,6 +37,36 @@ async function loginUser(req, res) {
   });
 }
 
+// fonction utilisé lors de la connection google, pour récupérer un token
+async function loginGoogle(req, res) {
+  const email = req.body.mail;
+  const result = await UserFunction.getUserByMail(email);
+
+  if (!result.length) {
+    res.status(400).json({
+      success: false,
+      message: 'No user',
+    });
+  }
+
+  const {
+    id, nom, prenom, mail, admin, mdp,
+  } = result[0];
+  const user = new User(id, nom, prenom, mail, admin, mdp);
+  delete user.mdp;
+
+  const token = Token.generateToken(user);
+
+  //l'envoie de token dans les cookies ne fonctionne pas
+  Token.setTokenCookie(res, token);
+
+  res.status(200).json({
+    success: true,
+    message: 'Generate token success',
+    token
+  });
+}
+
 // fonction qui permet de créer tous les utilisateurs et de les retourner
 async function allUsers(req, res) {
   const results = await UserFunction.getAllUsers();
@@ -246,6 +276,7 @@ async function formContact(req, res) {
 
 module.exports = {
   loginUser,
+  loginGoogle,
   allUsers,
   userById,
   logoutUser,

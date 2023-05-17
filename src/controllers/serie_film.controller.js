@@ -56,6 +56,7 @@ async function allCategorieSerie(req, res) {
 // fonction qui retourne les catégories
 async function addAvis(req, res) {
   const id_compte = req.user.id;
+  console.log(id_compte);
   const id_serie_film = req.body.seriefilmId;
   const { comment } = req.body;
   const { note } = req.body;
