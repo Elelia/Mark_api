@@ -15,7 +15,7 @@ async function getAllCategories(){
 
     client.release();
     return res.rows;
-  }catch(err) {
+  } catch(err) {
     console.log(err);
   }
 }
@@ -61,8 +61,6 @@ async function insertAvis(id_compte, id_serie_film, comment, note) {
     // on ferme la connexion
     client.release();
     result = true;
-    // await dbConn.query(query, [id_compte, id_serie_film, comment, note]);
-    // result = true;
   } catch (err) {
     console.error(err);
   }

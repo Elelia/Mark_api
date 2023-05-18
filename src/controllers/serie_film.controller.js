@@ -53,22 +53,19 @@ async function allCategorieSerie(req, res) {
   }
 }
 
-// fonction qui retourne les catégories
+// fonction qui permet d'enregistrer un nouvel avis en base
 async function addAvis(req, res) {
   const id_compte = req.user.id;
-  console.log(id_compte);
   const id_serie_film = req.body.seriefilmId;
-  const { comment } = req.body;
-  const { note } = req.body;
-  const { date } = req.body;
+  const comment = req.body.comment;
+  const note = req.body.note;
+  const date = req.body.date;
 
-  console.log(req.body);
   const result = await SeriefilmFunction.insertAvis(id_compte, id_serie_film, comment, note, date);
-  if (result) {
-    res.status(201).json(result);
-  } else {
-    res.status(500).send('Error while insert avis');
+  if (!result) {
+    res.status(400).send('Error while insert avis'); 
   }
+  res.status(201).json(result);
 }
 
 // fonction qui retourne tous les avis

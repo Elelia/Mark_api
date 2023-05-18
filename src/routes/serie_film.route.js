@@ -1,7 +1,5 @@
 const express = require('express');
-
 const router = express.Router();
-
 const SerieFilm = require('../controllers/serie_film.controller');
 const session = require('../utils/session');
 
