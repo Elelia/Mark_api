@@ -183,19 +183,11 @@ async function createOneUser(req, res) {
         pass: process.env.PASSWORD_MAIL,
       },
     });
-    /* transporter.verify(function (error, success) {
-            if (error) {
-              console.log(error);
-            } else {
-              console.log("Server is ready to take our messages");
-            }
-        }); */
     const message = {
       from: process.env.ADDRESS_MAIL,
       to: req.body.mail,
       subject: 'Inscription réussie à Mark',
       text: "Bonjour ! Votre inscription à notre site web Mark s'est bien déroulée. Vous pouvez dès à présent vous connecter avec vos identifiants afin de regarder vos films et séries préférés !",
-      html: '<p>Contenu du message en format HTML</p>',
     };
     transporter.sendMail(message, (err, info) => {
       if (err) {

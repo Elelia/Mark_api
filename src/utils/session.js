@@ -5,8 +5,6 @@ const jwt = require('jsonwebtoken');
 //génère un token à la connection de l'utilisateur
 function generateToken(user) {
   const { id, nom, prenom, mail, admin } = user;
-  //on met les données de l'utilisateur connecté dans le payload
-  //permet de retrouver les informations de l'utilisateur ensuite
   const payload = { id, nom, prenom, mail, admin };
   const accessToken = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '1h' });
 

@@ -73,7 +73,8 @@ async function getAllAvis(id) {
   const query = `
     select
     avis.*,
-    c.prenom
+    c.prenom,
+    c.nom
     from
     avis
     inner join
