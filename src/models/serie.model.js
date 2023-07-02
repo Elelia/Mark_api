@@ -390,11 +390,179 @@ async function insertSerie(id_serie) {
   }
 }
 
+//retrouve les 20 séries les plus vues du mois actuel
+async function getMostSerieSeen() {
+  const query = `
+  select distinct on (sf.id)
+  cat.id as cat_id,
+  cat.nom as cat_nom,
+  sf.id as id_serie_film,
+  sf.*
+  from 
+  categorie cat
+  inner join
+  categorie_serie_film csf
+  on
+  cat.id = csf.id_categorie
+  inner join
+  serie_film sf
+  on
+  sf.id = csf.id_serie_film
+  inner join
+  saison s
+  on
+  s.id_serie_film = sf.id
+  inner join
+  episode e
+  on
+  e.id_saison = s.id
+  inner join
+  visionnage v
+  on
+  v.id_episode = e.id
+  where
+  sf.id not in (select id_serie_film from film) and
+  e.id in (
+    select
+    e.id
+    from
+    serie_film sf
+    inner join
+    saison s
+    on
+    s.id_serie_film = sf.id
+    inner join
+    episode e
+    on
+    e.id_saison = s.id
+    inner join
+    visionnage v
+    on
+    v.id_episode = e.id
+    group by
+    v.id_episode,
+    e.id
+    order by
+    count(id_episode) desc
+  ) and
+  EXTRACT(MONTH FROM v.jour) = EXTRACT(MONTH FROM CURRENT_DATE) and
+  EXTRACT(YEAR FROM v.jour) = EXTRACT(YEAR FROM CURRENT_DATE)
+  group by
+  cat.id,
+  sf.id
+  limit 20
+  `;
+
+  try {
+    const client = await dbConn.connect();
+
+    const res = await client.query(query);
+
+    client.release();
+    return res.rows;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+//fonction qui affiche retrouve 20 séries en fonction des préférences catégorie de l'utilisateur
+async function getSerieByPref(id_user){
+  const query = `
+    select distinct
+    cat.id as cat_id,
+    cat.nom as cat_nom,
+    sf.id as id_serie_film,
+    sf.*
+    from 
+    categorie cat
+    inner join
+    categorie_serie_film csf
+    on
+    cat.id = csf.id_categorie
+    inner join
+    serie_film sf
+    on
+    sf.id = csf.id_serie_film
+    inner join
+    preference_categorie pc
+    on
+    pc.id_categorie = cat.id
+    inner join
+    compte c
+    on
+    c.id = pc.id_compte
+    where
+    sf.id not in (select id_serie_film from film) and
+    c.id = $1
+    limit 20;
+  `;
+
+  try {
+    const client = await dbConn.connect();
+
+    const res = await client.query(query, [id_user]);
+
+    client.release();
+    return res.rows;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+//fonction qui affiche retrouve 20 séries en fonction des préférences catégorie de l'utilisateur
+async function getSerieCountByCategorie(){
+  const query = `
+  select
+  cat.nom as cat_nom,
+  count(v.id)
+  from 
+  categorie cat
+  inner join
+  categorie_serie_film csf
+  on
+  cat.id = csf.id_categorie
+  inner join
+  serie_film sf
+  on
+  sf.id = csf.id_serie_film
+  inner join
+  saison s
+  on
+  s.id_serie_film = sf.id
+  inner join
+  episode e
+  on
+  e.id_saison = s.id
+  inner join
+  visionnage v
+  on
+  v.id_episode = e.id
+  where
+  sf.id not in (select id_serie_film from film)
+  group by
+  cat.nom
+  `;
+
+  try {
+    const client = await dbConn.connect();
+
+    const res = await client.query(query);
+
+    client.release();
+    return res.rows;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 module.exports = {
   getAllCategorieSerie,
   getAllSerie,
   getSerieCatTMDB,
   insertSerie,
   getSaisonByIdSerie,
-  getEpisodeBySaison
+  getEpisodeBySaison,
+  getMostSerieSeen,
+  getSerieByPref,
+  getSerieCountByCategorie
 };

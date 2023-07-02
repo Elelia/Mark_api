@@ -1,3 +1,4 @@
+//fichier pour les tokens
 const jwt = require('jsonwebtoken');
 // const { addToBlacklist } = require('../utils/token');
 // const { getBlacklist } = require('../utils/token');

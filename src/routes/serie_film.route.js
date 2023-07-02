@@ -44,4 +44,12 @@ router.get('/serie/saison/:id_serie', SerieFilm.saisonByIdSerie);
 
 router.get('/serie/saison/episode/:id_saison', SerieFilm.episodeByIdSaison);
 
+router.get('/film/mostSeenCat', SerieFilm.movieCountByCategorie);
+
+router.get('/serie/most_seen', SerieFilm.serieMostSeen);
+
+router.get('/serie/bypref', session.authenticateToken, SerieFilm.serieByPreference);
+
+router.get('/serie/mostSeenCat', SerieFilm.serieCountByCategorie);
+
 module.exports = router;

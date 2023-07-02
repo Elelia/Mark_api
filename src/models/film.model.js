@@ -395,58 +395,63 @@ async function deleteMovie(id, id_film) {
   }
 }
 
-//retrouve les 20 films les plus
-//il faut que ce soit ceux du mois
+//retrouve les 20 films les plus vus dans le mois
 async function getMovieMostSeen(){
   const query = `
-    select distinct on (f.id)
-    cat.id as cat_id,
-    cat.nom as cat_nom,
-    sf.id as id_serie_film,
-    sf.*,
-    f.id as id_film,
-    f.*,
-    trailer.url as trailer
-    from 
-    categorie cat
-    inner join
-    categorie_serie_film csf
-    on
-    cat.id = csf.id_categorie
-    inner join
-    serie_film sf
-    on
-    sf.id = csf.id_serie_film
+  select distinct on (f.id)
+  cat.id as cat_id,
+  cat.nom as cat_nom,
+  sf.id as id_serie_film,
+  sf.*,
+  f.id as id_film,
+  f.*,
+  trailer.url as trailer
+  from 
+  categorie cat
+  inner join
+  categorie_serie_film csf
+  on
+  cat.id = csf.id_categorie
+  inner join
+  serie_film sf
+  on
+  sf.id = csf.id_serie_film
+  inner join
+  film f
+  on
+  f.id_serie_film = sf.id
+  inner join
+  video trailer
+  on
+  sf.id_bande_annonce = trailer.id
+  inner join
+  visionnage v
+  on
+  v.id_film = f.id
+  where
+  f.id in (
+    select
+    f.id
+    from
+    visionnage v
     inner join
     film f
     on
-    f.id_serie_film = sf.id
-    inner join
-    video trailer
-    on
-    sf.id_bande_annonce = trailer.id
-    where
-    f.id in (
-      select
-      f.id
-      from
-      visionnage v
-      inner join
-      film f
-      on
-      v.id_film = f.id
-      group by
-      v.id_film,
-      f.id
-      order by
-      count(id_film) desc
-    )
+    v.id_film = f.id
     group by
-    cat.id,
-    sf.id,
-    f.id,
-    trailer.id
-    limit 20
+    v.id_film,
+    f.id
+    order by
+    count(id_film) desc
+  ) and
+  EXTRACT(MONTH FROM v.jour) = EXTRACT(MONTH FROM CURRENT_DATE) and
+  EXTRACT(YEAR FROM v.jour) = EXTRACT(YEAR FROM CURRENT_DATE)
+  group by
+  cat.id,
+  sf.id,
+  f.id,
+  trailer.id
+  limit 20
   `;
 
   try {
@@ -516,6 +521,46 @@ async function getLastMovie(){
   }
 }
 
+//compte les catégories les plus vues
+async function getMovieCountByCategorie(){
+  const query = `
+    select
+    cat.nom as cat_nom,
+    count(v.id)
+    from 
+    categorie cat
+    inner join
+    categorie_serie_film csf
+    on
+    cat.id = csf.id_categorie
+    inner join
+    serie_film sf
+    on
+    sf.id = csf.id_serie_film
+    inner join
+    film f
+    on
+    f.id_serie_film = sf.id
+    left join
+    visionnage v
+    on
+    v.id_film = f.id
+    group by
+    cat.nom
+  `;
+
+  try {
+    const client = await dbConn.connect();
+
+    const res = await client.query(query);
+
+    client.release();
+    return res.rows;
+  } catch(err) {
+    console.log(err);
+  }
+}
+
 module.exports = {
   getAllFilm,
   getAllCategorieFilm,
@@ -526,5 +571,6 @@ module.exports = {
   updateMovie,
   deleteMovie,
   getMovieMostSeen,
-  getLastMovie
+  getLastMovie,
+  getMovieCountByCategorie
 };

@@ -94,7 +94,9 @@ async function oneUrlVideo(req, res) {
 async function filmByCategorieId(req, res) {
   const results = await FilmFunction.getFilmByCategorieId(req.params.cat_id);
   if (results) {
-    const allSeriefilm = results.map((oneSF) => new Film(oneSF.id_serie_film, oneSF.nom, oneSF.age_min, oneSF.resume, oneSF.id_bande_annonce, oneSF.url_vignette, oneSF.url_affiche, oneSF.date_sortie, oneSF.id_video, oneSF.cat_id, oneSF.cat_nom, oneSF.id_film, oneSF.trailer));
+    const allSeriefilm = results.map((oneSF) => new Film(oneSF.id_serie_film, oneSF.nom, 
+      oneSF.age_min, oneSF.resume, oneSF.id_bande_annonce, oneSF.url_vignette, oneSF.url_affiche, 
+      oneSF.date_sortie, oneSF.id_video, oneSF.cat_id, oneSF.cat_nom, oneSF.id_film, oneSF.trailer));
     console.log(allSeriefilm);
     res.status(200).json(allSeriefilm);
   } else {
@@ -158,6 +160,7 @@ async function insertSerieSelected(req, res) {
   });
 }
 
+//fonction qui renvoit 20 films en fonction des préférences catégories de l'utilisateur
 async function filmByPreference(req, res) {
   const results = await FilmFunction.getMovieByPref(req.user.id);
   if (results) {
@@ -170,6 +173,7 @@ async function filmByPreference(req, res) {
 
 //permet de savoir si un utilisateur a vu une vidéo
 async function videoSaw(req, res) {
+  console.log(req.body);
   const results = await SeriefilmFunction.insertVisionnage(req.user.id, req.body.id_film, req.body.id_episode);
   if (!results) {
     res.status(500).send('No values');
@@ -207,6 +211,7 @@ async function deleteMovie(req, res) {
   });
 }
 
+//retrouve les 20 films les plus vus
 async function movieMostSeen(req, res) {
   const results = await FilmFunction.getMovieMostSeen();
   if (results) {
@@ -249,6 +254,50 @@ async function episodeByIdSaison(req, res) {
   }
 }
 
+//fonction qui récupère qui compte
+async function movieCountByCategorie(req, res) {
+  const results = await FilmFunction.getMovieCountByCategorie();
+  if (results) {
+    // create a new user object
+    res.status(200).json(results);
+  } else {
+    res.status(404).send('No values');
+  }
+}
+
+//fonction qui récupère les 20 séries les plus vues du mois actuel
+async function serieMostSeen(req, res) {
+  const results = await SerieFunction.getMostSerieSeen();
+  if (results) {
+    // create a new user object
+    const allSeriefilm = results.map((oneSF) => new Film(oneSF.id_serie_film, oneSF.nom, oneSF.age_min, oneSF.resume, oneSF.id_bande_annonce, oneSF.url_vignette, oneSF.url_affiche, oneSF.date_sortie, oneSF.id_video, oneSF.cat_id, oneSF.cat_nom, oneSF.id_film, oneSF.trailer));
+    res.status(200).json(allSeriefilm);
+  } else {
+    res.status(404).send('No values');
+  }
+}
+
+//fonction qui retrouve 20 séries en fonction des préférences catégorie de l'utilisateur
+async function serieByPreference(req, res) {
+  const results = await SerieFunction.getSerieByPref(req.user.id);
+  if (results) {
+    const allSeriefilm = results.map((oneSF) => new Seriefilm(oneSF.id_serie_film, oneSF.nom, oneSF.age_min, oneSF.resume, oneSF.id_bande_annonce, oneSF.url_vignette, oneSF.url_affiche, oneSF.date_sortie, oneSF.id_video, oneSF.cat_id, oneSF.cat_nom));
+    res.status(200).json(allSeriefilm);
+  } else {
+    res.status(500).send('No values');
+  }
+}
+
+//fonction qui récupère qui compte
+async function serieCountByCategorie(req, res) {
+  const results = await SerieFunction.getSerieCountByCategorie();
+  if (results) {
+    res.status(200).json(results);
+  } else {
+    res.status(404).send('No values');
+  }
+}
+
 module.exports = {
   allFilm,
   allCategorieFilm,
@@ -269,5 +318,9 @@ module.exports = {
   movieMostSeen,
   movieLast,
   saisonByIdSerie,
-  episodeByIdSaison
+  episodeByIdSaison,
+  movieCountByCategorie,
+  serieMostSeen,
+  serieByPreference,
+  serieCountByCategorie
 };
