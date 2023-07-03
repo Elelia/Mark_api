@@ -563,6 +563,52 @@ async function insertVisionnage(id_user, id_film, id_episode){
   }
 }
 
+//retrouve toutes les catégories de la base de données
+async function getCountSeriefilmByMonth(){
+  const query = `
+    select
+    to_char(v.jour, 'Month') AS mois,
+    count(v.id)
+    from 
+    visionnage v
+    left join
+    film f
+    on
+    f.id = v.id_film
+    left join
+    episode e
+    on
+    e.id = v.id_episode
+    left join
+    saison s
+    on
+    s.id = e.id_saison
+    left join
+    serie_film sf
+    on
+    sf.id = s.id_serie_film
+    left join
+    serie_film sff
+    on
+    sff.id = f.id
+    GROUP BY
+    to_char(v.jour, 'Month')
+    ORDER BY
+    mois
+  `;
+
+  try {
+    const client = await dbConn.connect();
+
+    const res = await client.query(query);
+
+    client.release();
+    return res.rows;
+  } catch(err) {
+    console.log(err);
+  }
+}
+
 module.exports = {
   getAllCategories,
   getIdCategorie,
@@ -574,5 +620,6 @@ module.exports = {
   getMovieCatTMDB,
   getSerieCatTMDB,
   insertSerie,
-  insertVisionnage
+  insertVisionnage,
+  getCountSeriefilmByMonth
 };

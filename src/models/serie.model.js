@@ -555,6 +555,44 @@ async function getSerieCountByCategorie(){
   }
 }
 
+//retrouve toutes les catégories de la base de données
+async function getCountSerieByMonth(){
+  const query = `
+    select
+    to_char(v.jour, 'Month') AS mois,
+    count(v.id)
+    from 
+    visionnage v
+    inner join
+    episode e
+    on
+    e.id = v.id_episode
+    left join
+    saison s
+    on
+    s.id = e.id_saison
+    left join
+    serie_film sf
+    on
+    sf.id = s.id_serie_film
+    GROUP BY
+    to_char(v.jour, 'Month')
+    ORDER BY
+    mois
+  `;
+
+  try {
+    const client = await dbConn.connect();
+
+    const res = await client.query(query);
+
+    client.release();
+    return res.rows;
+  } catch(err) {
+    console.log(err);
+  }
+}
+
 module.exports = {
   getAllCategorieSerie,
   getAllSerie,
@@ -564,5 +602,6 @@ module.exports = {
   getEpisodeBySaison,
   getMostSerieSeen,
   getSerieByPref,
-  getSerieCountByCategorie
+  getSerieCountByCategorie,
+  getCountSerieByMonth
 };

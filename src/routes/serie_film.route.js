@@ -52,4 +52,10 @@ router.get('/serie/bypref', session.authenticateToken, SerieFilm.serieByPreferen
 
 router.get('/serie/mostSeenCat', SerieFilm.serieCountByCategorie);
 
+router.get('/countbymonth', SerieFilm.seriefilmCountByMonth);
+
+router.get('/film/countbymonth', SerieFilm.filmCountByMonth);
+
+router.get('/serie/countbymonth', SerieFilm.serieCountByMonth);
+
 module.exports = router;

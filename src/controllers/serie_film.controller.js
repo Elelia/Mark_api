@@ -288,9 +288,39 @@ async function serieByPreference(req, res) {
   }
 }
 
-//fonction qui récupère qui compte
+//fonction qui compte le nombre de vues des séries par catégories
 async function serieCountByCategorie(req, res) {
   const results = await SerieFunction.getSerieCountByCategorie();
+  if (results) {
+    res.status(200).json(results);
+  } else {
+    res.status(404).send('No values');
+  }
+}
+
+//fonction qui récupère qui compte
+async function seriefilmCountByMonth(req, res) {
+  const results = await SeriefilmFunction.getCountSeriefilmByMonth();
+  if (results) {
+    res.status(200).json(results);
+  } else {
+    res.status(404).send('No values');
+  }
+}
+
+//fonction qui récupère qui compte
+async function filmCountByMonth(req, res) {
+  const results = await FilmFunction.getCountFilmByMonth();
+  if (results) {
+    res.status(200).json(results);
+  } else {
+    res.status(404).send('No values');
+  }
+}
+
+//fonction qui récupère qui compte
+async function serieCountByMonth(req, res) {
+  const results = await SerieFunction.getCountSerieByMonth();
   if (results) {
     res.status(200).json(results);
   } else {
@@ -322,5 +352,8 @@ module.exports = {
   movieCountByCategorie,
   serieMostSeen,
   serieByPreference,
-  serieCountByCategorie
+  serieCountByCategorie,
+  seriefilmCountByMonth,
+  filmCountByMonth,
+  serieCountByMonth
 };

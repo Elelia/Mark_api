@@ -561,6 +561,40 @@ async function getMovieCountByCategorie(){
   }
 }
 
+//retrouve toutes les catégories de la base de données
+async function getCountFilmByMonth(){
+  const query = `
+    select
+    to_char(v.jour, 'Month') AS mois,
+    count(v.id)
+    from 
+    visionnage v
+    inner join
+    film f
+    on
+    f.id = v.id_film
+    left join
+    serie_film sf
+    on
+    sf.id = f.id
+    GROUP BY
+    to_char(v.jour, 'Month')
+    ORDER BY
+    mois
+  `;
+
+  try {
+    const client = await dbConn.connect();
+
+    const res = await client.query(query);
+
+    client.release();
+    return res.rows;
+  } catch(err) {
+    console.log(err);
+  }
+}
+
 module.exports = {
   getAllFilm,
   getAllCategorieFilm,
@@ -572,5 +606,6 @@ module.exports = {
   deleteMovie,
   getMovieMostSeen,
   getLastMovie,
-  getMovieCountByCategorie
+  getMovieCountByCategorie,
+  getCountFilmByMonth
 };
